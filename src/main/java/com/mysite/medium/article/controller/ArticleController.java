@@ -40,6 +40,11 @@ public class ArticleController {
     private final ArticleVoteService articleVoteService;
     private final CommentVoteService commentVoteService;
 
+    @GetMapping("/")
+    public String root() {
+        return "redirect:/article/list";
+    }
+
     @GetMapping("/list")
     public String listArticles(Model model,
                                @RequestParam(value = "page", defaultValue = "0") int page,

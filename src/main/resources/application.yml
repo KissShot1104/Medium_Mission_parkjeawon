@@ -2,7 +2,7 @@ Spring:
   resources:
     static-locations: classpath:/static/,classpath:/public/,classpath:/resources/,classpath:/META-INF/resources/
   datasource:
-    url: jdbc:h2:tcp://localhost/~/sbb
+    url: jdbc:h2:tcp://localhost/~/medium
     username: sa
     password:
     driver-class-name: org.h2.Driver
