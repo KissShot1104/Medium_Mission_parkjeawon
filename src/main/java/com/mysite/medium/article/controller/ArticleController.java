@@ -136,9 +136,6 @@ public class ArticleController {
         if (!articleDto.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
-        this.commentVoteService.deleteCommentVoteAllByArticleId(articleId) ;
-        this.articleVoteService.deleteArticleVoteAllByArticleId(articleId);
-        this.commentService.deleteAllByArticleId(articleId);
         this.articleService.deleteArticle(articleId);
         return "redirect:/";
     }
