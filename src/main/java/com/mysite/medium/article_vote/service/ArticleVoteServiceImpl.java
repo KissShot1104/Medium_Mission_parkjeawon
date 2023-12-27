@@ -6,9 +6,10 @@ import com.mysite.medium.article_vote.dto.ArticleVoteDto;
 import com.mysite.medium.article_vote.dto.ArticleVoteMapper;
 import com.mysite.medium.article_vote.entity.ArticleVote;
 import com.mysite.medium.article_vote.repository.ArticleVoteRepository;
+import com.mysite.medium.global.exception.EntityNotFoundException;
+import com.mysite.medium.global.exception.ErrorCode;
 import com.mysite.medium.user.entity.SiteUser;
 import com.mysite.medium.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -29,20 +30,17 @@ public class ArticleVoteServiceImpl implements ArticleVoteService {
 
     @Transactional
     public void toggleArticleVote(final Long articleId, final String username) {
-        final Optional<Article> article = articleRepository.findById(articleId);
-        if (article.isEmpty()) {
-            throw new EntityNotFoundException("article Not Found Entity");
-        }
+        final Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        final Optional<SiteUser> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            throw new EntityNotFoundException("User Not Found Entity");
-        }
+        final SiteUser user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         final Optional<ArticleVote> articleVote = articleVoteRepository.findByArticleIdAndUserId(articleId,
-                user.get().getId());
+                user.getId());
+
         if (articleVote.isEmpty()) {
-            createArticleVote(article.get(), user.get());
+            createArticleVote(article, user);
         } else {
             deleteArticleVoteByArticleVote(articleVote.get());
         }
@@ -61,12 +59,12 @@ public class ArticleVoteServiceImpl implements ArticleVoteService {
         articleVoteRepository.delete(articleVote);
     }
 
-
     public List<ArticleVoteDto> findArticleVoterAllByArticleId(final Long articleId) {
-        final List<ArticleVote> articleVoteList = articleVoteRepository.findAllByArticleId(articleId);
+        final List<ArticleVote> articleVoteList = articleVoteRepository
+                .findAllByArticleId(articleId);
 
-        final List<ArticleVoteDto> articleVoteDtoList = articleVoteMapper.articleVoteListToArticleVoteDtoList(
-                articleVoteList);
+        final List<ArticleVoteDto> articleVoteDtoList = articleVoteMapper
+                .articleVoteListToArticleVoteDtoList(articleVoteList);
 
         return articleVoteDtoList;
     }
