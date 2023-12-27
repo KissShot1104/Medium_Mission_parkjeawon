@@ -9,13 +9,16 @@ import com.mysite.medium.global.exception.ErrorCode;
 import com.mysite.medium.user.dto.SiteUserDto;
 import com.mysite.medium.user.dto.SiteUserDtoMapper;
 import com.mysite.medium.user.entity.SiteUser;
+import com.mysite.medium.user.repository.UserRepository;
 import com.mysite.medium.user.service.UserService;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +28,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final ArticleMapper articleMapper;
     private final SiteUserDtoMapper siteUserDtoMapper;
 
     public Page<ArticleDto> getArticleAll(final int page, final String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return this.articleRepository.findAllByKeyword(kw, pageable);
+    }
+
+    public Slice<ArticleDto> getArticleSliceAll(final int page, final String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
@@ -46,17 +56,19 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Transactional
-    public void createArticle(final ArticleDto articleDto, final SiteUserDto siteUserDto) {
+    public void createArticle(final ArticleDto articleDto, final Principal principal) {
 
-        final SiteUser siteUser = siteUserDtoMapper.siteUserDtoToSiteUser(siteUserDto);
+//        final SiteUser siteUser = siteUserDtoMapper.siteUserDtoToSiteUser(siteUserDto);
+        final SiteUser siteUser = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        Article article = Article.builder()//수정 바람
+        final Article article = Article.builder()//수정 바람
                 .subject(articleDto.getSubject())
                 .content(articleDto.getContent())
                 .author(siteUser)
                 .build();
 
-        this.articleRepository.save(article);
+        articleRepository.save(article);
     }
 
     @Transactional

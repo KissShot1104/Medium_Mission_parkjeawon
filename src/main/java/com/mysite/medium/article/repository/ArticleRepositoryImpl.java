@@ -15,6 +15,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import static com.mysite.medium.article.entity.QArticle.article;
 import static com.mysite.medium.comment.entity.QComment.comment;
@@ -76,6 +78,40 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
         return new PageImpl<>(articleList, pageable, total);
     }
+
+    @Override
+    public Slice<ArticleDto> findAllByKeywordSlice(String kw, Pageable pageable) {
+
+        List<ArticleDto> articleList = queryFactory
+                .select(new QArticleDto(
+                        article.id,
+                        article.subject,
+                        new QSiteUserDto(article.author.username),
+                        article.createDate,
+                        comment.count()
+                ))
+                .from(article)
+                .leftJoin(comment).on(comment.article.eq(article))
+                .groupBy(article.id)
+                .where(
+                        articleTitleContains(kw)
+                                .or(articleContentContains(kw))
+                                .or(articleAuthorContains(kw))
+                                .or(commentContentContains(kw))
+                                .or(commentAuthorContains(kw))
+                )
+                .distinct()
+                .orderBy(article.createDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = articleList.size() > pageable.getPageSize();
+        List<ArticleDto> content = hasNext ? articleList.subList(0, pageable.getPageSize()) : articleList;
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
+
 
 
     public BooleanExpression articleTitleContains(String articleTitleCond) {
