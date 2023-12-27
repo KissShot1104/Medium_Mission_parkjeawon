@@ -7,6 +7,8 @@ import com.mysite.medium.comment.dto.CommentDto;
 import com.mysite.medium.comment.dto.CommentMapper;
 import com.mysite.medium.comment.entity.Comment;
 import com.mysite.medium.comment.repository.CommentRepository;
+import com.mysite.medium.global.exception.EntityNotFoundException;
+import com.mysite.medium.global.exception.ErrorCode;
 import com.mysite.medium.user.dto.SiteUserDto;
 import com.mysite.medium.user.dto.SiteUserDtoMapper;
 import java.util.ArrayList;
@@ -34,62 +36,56 @@ public class CommentServiceImpl implements CommentService {
         final List<Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
         final Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts));
-        final Page<CommentDto> commentPaging = this.commentRepository.findCommentAll(pageable, id);
+        final Page<CommentDto> commentPaging = commentRepository.findCommentAll(pageable, id);
 
         return commentPaging;
     }
 
     public Long createComment(final Long articleId, final CommentDto commentDto, final SiteUserDto author) {
 
-        final Optional<Article> article = articleRepository.findById(articleId);
+        final Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         final Comment comment = Comment.builder()
                 .content(commentDto.getContent())
-                .article(article.get())
+                .article(article)
                 .author(siteUserDtoMapper.siteUserDtoToSiteUser(author))
                 .build();
 
-        this.commentRepository.save(comment);
+        commentRepository.save(comment);
 
-        return comment.getId();
+        Long commentId = comment.getId();
+        return commentId;
     }
 
     public CommentDto findCommentByCommendId(final Long commentId) {
-        final Optional<Comment> comment = this.commentRepository.findById(commentId);
+        final Comment comment = this.commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (comment.isEmpty()) {
-            throw new DataNotFoundException("comment not found");
-        }
-
-        return commentMapper.commentToCommentDto(comment.get());
+        CommentDto commentDto = commentMapper.commentToCommentDto(comment);
+        return commentDto;
     }
 
     @Transactional
     public void modifyComment(final Long commentId, final CommentDto commentDto) {
-        final Optional<Comment> comment = commentRepository.findById(commentId);
+        final Comment comment = commentRepository.findById(commentId)
+                        .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (comment.isEmpty()) {
-            throw new DataNotFoundException("Not Found Comment");
-        }
-
-        comment.get().modifyComment(commentDto);
+        comment.modifyComment(commentDto);
     }
 
     @Transactional
     public void deleteComment(final Long commentId) {
 
-        final Optional<Comment> comment = commentRepository.findById(commentId);
+        final Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (comment.isEmpty()) {
-            throw new DataNotFoundException("Not Found Comment");
-        }
-
-        this.commentRepository.delete(comment.get());
+        commentRepository.delete(comment);
     }
 
     @Transactional
     public void deleteAllByArticleId(final Long articleId) {
-        this.commentRepository.deleteAllByArticleId(articleId);
+        commentRepository.deleteAllByArticleId(articleId);
     }
 
 
