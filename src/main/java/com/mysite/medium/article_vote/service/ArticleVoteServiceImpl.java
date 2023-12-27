@@ -2,13 +2,12 @@ package com.mysite.medium.article_vote.service;
 
 import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.article.repository.ArticleRepository;
-import com.mysite.medium.article.service.ArticleService;
 import com.mysite.medium.article_vote.dto.ArticleVoteDto;
+import com.mysite.medium.article_vote.dto.ArticleVoteMapper;
 import com.mysite.medium.article_vote.entity.ArticleVote;
 import com.mysite.medium.article_vote.repository.ArticleVoteRepository;
 import com.mysite.medium.user.entity.SiteUser;
 import com.mysite.medium.user.repository.UserRepository;
-import com.mysite.medium.user.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
@@ -24,32 +23,33 @@ public class ArticleVoteServiceImpl implements ArticleVoteService {
     private final ArticleVoteRepository articleVoteRepository;
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
-    private final ArticleService articleService;
-    private final UserService userService;
+
+    private final ArticleVoteMapper articleVoteMapper;
 
 
     @Transactional
     public void toggleArticleVote(final Long articleId, final String username) {
-        Optional<Article> article = articleRepository.findById(articleId);
+        final Optional<Article> article = articleRepository.findById(articleId);
         if (article.isEmpty()) {
             throw new EntityNotFoundException("article Not Found Entity");
         }
 
-        Optional<SiteUser> user = userRepository.findByUsername(username);
+        final Optional<SiteUser> user = userRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new EntityNotFoundException("User Not Found Entity");
         }
 
-        Optional<ArticleVote> articleVote = articleVoteRepository.findByArticleIdAndUserId(articleId, user.get().getId());
+        final Optional<ArticleVote> articleVote = articleVoteRepository.findByArticleIdAndUserId(articleId,
+                user.get().getId());
         if (articleVote.isEmpty()) {
             createArticleVote(article.get(), user.get());
         } else {
-            deleteArticleVote(articleVote.get());
+            deleteArticleVoteByArticleVote(articleVote.get());
         }
     }
 
-    private void createArticleVote(Article article, SiteUser user) {
-        ArticleVote articleVote = com.mysite.medium.article_vote.entity.ArticleVote.builder()
+    private void createArticleVote(final Article article, final SiteUser user) {
+        final ArticleVote articleVote = ArticleVote.builder()
                 .article(article)
                 .user(user)
                 .build();
@@ -57,30 +57,23 @@ public class ArticleVoteServiceImpl implements ArticleVoteService {
         articleVoteRepository.save(articleVote);
     }
 
-    private void deleteArticleVote(ArticleVote articleVote) {
+    private void deleteArticleVoteByArticleVote(final ArticleVote articleVote) {
         articleVoteRepository.delete(articleVote);
     }
 
 
-    public List<ArticleVoteDto> findArticleVoterAllByArticleId(Long articleId) {
-        List<ArticleVote> articleVote = articleVoteRepository.findAllByArticleId(articleId);
+    public List<ArticleVoteDto> findArticleVoterAllByArticleId(final Long articleId) {
+        final List<ArticleVote> articleVoteList = articleVoteRepository.findAllByArticleId(articleId);
 
-        return articleVote.stream()
-                .map(this::articleVoterToArticleVoterDto)
-                .toList();
+        final List<ArticleVoteDto> articleVoteDtoList = articleVoteMapper.articleVoteListToArticleVoteDtoList(
+                articleVoteList);
+
+        return articleVoteDtoList;
     }
 
     @Transactional
-    public void deleteArticleVoteAllByArticleId(Long articleId) {
+    public void deleteArticleVoteAllByArticleId(final Long articleId) {
         articleVoteRepository.deleteAllByArticleId(articleId);
-    }
-
-    private ArticleVoteDto articleVoterToArticleVoterDto(ArticleVote articleVote) {
-        return ArticleVoteDto.builder()
-                .id(articleVote.getId())
-                .siteUserDto(userService.siteUserToSiteUserForm(articleVote.getUser()))
-                .articleDto(articleService.articleToArticleDto(articleVote.getArticle()))
-                .build();
     }
 
 }

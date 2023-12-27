@@ -4,7 +4,7 @@ import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.comment.dto.CommentDto;
 import jakarta.persistence.JoinColumn;
 
-import com.mysite.medium.DateTime;
+import com.mysite.medium.global.BaseEntity;
 import com.mysite.medium.user.entity.SiteUser;
 
 import jakarta.persistence.Column;
@@ -21,7 +21,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Comment extends DateTime {
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="comment_id")

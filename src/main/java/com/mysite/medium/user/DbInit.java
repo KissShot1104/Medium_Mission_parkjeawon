@@ -45,12 +45,7 @@ public class DbInit {
                     .build();
             siteUsers.add(siteUser);
             userRepository.save(siteUser);
-//            userService.createUser(UserCreateDto.builder()
-//                    .username(siteUser.getUsername())
-//                    .password1(siteUser.getPassword())
-//                    .password2(siteUser.getPassword())
-//                    .email(siteUser.getEmail())
-//                    .build());
+
         }
 
         //Init Article
@@ -59,13 +54,11 @@ public class DbInit {
             Article article = Article.builder()
                     .subject(i + "" + i + i)
                     .content(i + "" + i + i)
-//                    .author(userService.siteUserFormToSiteUser(siteUsers.get(i%10)))
-                    .author(siteUsers.get(1 % 10))
+                    .author(siteUsers.get(i % 10))
                     .build();
 
             articles.add(article);
             articleRepository.save(article);
-//            articleService.createArticle(articleService.articleToArticleDto(article), siteUsers.get(i%10));
         }
 
         //Init comment

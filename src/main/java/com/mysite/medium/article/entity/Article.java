@@ -3,7 +3,7 @@ package com.mysite.medium.article.entity;
 import com.mysite.medium.article.dto.ArticleDto;
 import jakarta.persistence.JoinColumn;
 
-import com.mysite.medium.DateTime;
+import com.mysite.medium.global.BaseEntity;
 import com.mysite.medium.user.entity.SiteUser;
 
 import jakarta.persistence.Column;
@@ -19,7 +19,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Article extends DateTime {
+public class Article extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="article_id")

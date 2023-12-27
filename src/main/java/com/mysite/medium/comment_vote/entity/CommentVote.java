@@ -1,5 +1,6 @@
 package com.mysite.medium.comment_vote.entity;
 
+import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.comment.entity.Comment;
 import com.mysite.medium.user.entity.SiteUser;
 import jakarta.persistence.Column;
@@ -25,6 +26,10 @@ public class CommentVote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_vote_id")
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "article_id")
+    private Article article;
 
     @ManyToOne
     @JoinColumn(name = "comment_id")

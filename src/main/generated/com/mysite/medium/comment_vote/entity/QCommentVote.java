@@ -22,6 +22,8 @@ public class QCommentVote extends EntityPathBase<CommentVote> {
 
     public static final QCommentVote commentVote = new QCommentVote("commentVote");
 
+    public final com.mysite.medium.article.entity.QArticle article;
+
     public final com.mysite.medium.comment.entity.QComment comment;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -46,6 +48,7 @@ public class QCommentVote extends EntityPathBase<CommentVote> {
 
     public QCommentVote(Class<? extends CommentVote> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.article = inits.isInitialized("article") ? new com.mysite.medium.article.entity.QArticle(forProperty("article"), inits.get("article")) : null;
         this.comment = inits.isInitialized("comment") ? new com.mysite.medium.comment.entity.QComment(forProperty("comment"), inits.get("comment")) : null;
         this.user = inits.isInitialized("user") ? new com.mysite.medium.user.entity.QSiteUser(forProperty("user")) : null;
     }

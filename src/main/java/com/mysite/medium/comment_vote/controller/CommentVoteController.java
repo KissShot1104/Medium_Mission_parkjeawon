@@ -18,7 +18,7 @@ public class CommentVoteController {
     public String voteComment(Principal principal,
                               @PathVariable("commentId") Long commentId) {
 
-        commentVoteService.createCommentVote(commentId, principal.getName());
+        commentVoteService.toggleCommentVote(commentId, principal.getName());
 
         return "redirect:/article/{articleId}";
     }

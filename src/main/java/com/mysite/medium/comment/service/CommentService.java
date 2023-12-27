@@ -1,27 +1,21 @@
 package com.mysite.medium.comment.service;
 
 import com.mysite.medium.comment.dto.CommentDto;
-import com.mysite.medium.comment.entity.Comment;
 import com.mysite.medium.user.dto.SiteUserDto;
 import org.springframework.data.domain.Page;
 
 public interface CommentService {
 
-    public Long createComment(Long articleId, CommentDto commentDto, SiteUserDto author);
+    Long createComment(final Long articleId, final CommentDto commentDto, final SiteUserDto author);
 
-    public Page<CommentDto> findCommentAllByArticleId(int page, Long id);
+    Page<CommentDto> findCommentAllByArticleId(final int page, final Long id);
 
-    public CommentDto getComment(Long id);
+    CommentDto findCommentByCommendId(final Long commentId);
 
-    public void modifyComment(Long commentId , CommentDto commentDto);
+    void modifyComment(final Long commentId, final CommentDto commentDto);
 
-    public void deleteComment(Long commentId);
+    void deleteComment(final Long commentId);
 
-    public void deleteAllByArticleId(Long articleId);
+    void deleteAllByArticleId(final Long articleId);
 
-    public Comment commentDtoToComment(CommentDto commentDto);
-
-    public CommentDto commentToCommentDto(Comment comment);
-
-    public void vote(CommentDto commentDto, SiteUserDto siteUserDto);
 }

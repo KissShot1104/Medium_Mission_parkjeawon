@@ -40,11 +40,6 @@ public class ArticleController {
     private final ArticleVoteService articleVoteService;
     private final CommentVoteService commentVoteService;
 
-    @GetMapping("/")
-    public String root() {
-        return "redirect:/article/list";
-    }
-
     @GetMapping("/list")
     public String listArticles(Model model,
                                @RequestParam(value = "page", defaultValue = "0") int page,
@@ -63,7 +58,7 @@ public class ArticleController {
         ArticleDto articleDto = articleService.findArticleByArticleId(articleId);
         Page<CommentDto> pagingComment = commentService.findCommentAllByArticleId(page, articleId);
         List<ArticleVoteDto> articleVoteDtos = articleVoteService.findArticleVoterAllByArticleId(articleId);
-        Map<Long, Long> commentVoteDtos = commentVoteService.getCommentLikesForArticle(articleId);
+        Map<Long, Long> commentVoteDtos = commentVoteService.getCommentLikesForArticle(articleId);//변수 이름 수정 바람
 
         model.addAttribute("article", articleDto);
         model.addAttribute("paging", pagingComment);
@@ -95,13 +90,13 @@ public class ArticleController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/modify/{id}")
+    @GetMapping("/modify/{articleId}")
     public String modifyArticle(ArticleDto articleDto,
-                                @PathVariable("id") Long id,
+                                @PathVariable("articleId") Long articleId,
                                 Principal principal,
                                 Model model) {
 
-        ArticleDto existingArticle = this.articleService.findArticleByArticleId(id);
+        ArticleDto existingArticle = this.articleService.findArticleByArticleId(articleId);
         if (!existingArticle.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
@@ -134,16 +129,17 @@ public class ArticleController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/delete/{id}")
+    @GetMapping("/delete/{articleId}")
     public String deleteArticle(Principal principal,
-                                @PathVariable("id") Long id) {
-        ArticleDto articleDto = this.articleService.findArticleByArticleId(id);
+                                @PathVariable("articleId") Long articleId) {
+        ArticleDto articleDto = this.articleService.findArticleByArticleId(articleId);
         if (!articleDto.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
-        this.articleVoteService.deleteArticleVoteAllByArticleId(id);
-        this.commentService.deleteAllByArticleId(id);
-        this.articleService.deleteArticle(id);
+        this.commentVoteService.deleteCommentVoteAllByArticleId(articleId) ;
+        this.articleVoteService.deleteArticleVoteAllByArticleId(articleId);
+        this.commentService.deleteAllByArticleId(articleId);
+        this.articleService.deleteArticle(articleId);
         return "redirect:/";
     }
 

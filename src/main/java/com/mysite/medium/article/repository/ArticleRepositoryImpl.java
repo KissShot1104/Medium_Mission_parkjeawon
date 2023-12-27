@@ -56,6 +56,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                                 .or(commentAuthorContains(kw))
                 )
                 .distinct()
+                .orderBy(article.createDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

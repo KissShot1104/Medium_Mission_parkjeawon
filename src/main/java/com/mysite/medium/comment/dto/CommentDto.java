@@ -3,6 +3,7 @@ package com.mysite.medium.comment.dto;
 import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.user.dto.SiteUserDto;
 import com.querydsl.core.annotations.QueryProjection;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
 import lombok.*;
@@ -18,7 +19,7 @@ public class CommentDto {
 
     private Long id;
 
-    @NotEmpty(message = "댓글 내용을 필수입니다.")
+    @NotBlank(message = "댓글 내용을 필수입니다.")
     private String content;
 
     private Article article;

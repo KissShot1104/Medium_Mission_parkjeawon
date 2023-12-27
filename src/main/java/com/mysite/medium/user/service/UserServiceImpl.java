@@ -1,17 +1,15 @@
 package com.mysite.medium.user.service;
 
+import com.mysite.medium.DataNotFoundException;
 import com.mysite.medium.user.dto.SiteUserDto;
+import com.mysite.medium.user.dto.SiteUserDtoMapper;
 import com.mysite.medium.user.dto.UserCreateDto;
 import com.mysite.medium.user.entity.SiteUser;
 import com.mysite.medium.user.repository.UserRepository;
 import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.mysite.medium.DataNotFoundException;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
@@ -20,11 +18,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SiteUserDtoMapper siteUserDtoMapper;
 
     @Transactional
-    public void createUser(UserCreateDto userCreateDto) {
+    public void createUser(final UserCreateDto userCreateDto) {
 
-        SiteUser user = SiteUser.builder()
+        final SiteUser user = SiteUser.builder()
                 .username(userCreateDto.getUsername())
                 .email(userCreateDto.getEmail())
                 .password(passwordEncoder.encode(userCreateDto.getPassword1()))
@@ -32,38 +31,18 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
     }
-    
-    public SiteUserDto getUser(String username) {
-        Optional<SiteUser> siteUser = this.userRepository.findByUsername(username);
+
+    public SiteUserDto getUser(final String username) {
+        final Optional<SiteUser> siteUser = this.userRepository.findByUsername(username);
 
         if (siteUser.isEmpty()) {
             throw new DataNotFoundException("siteuser not found");
         }
 
-        return SiteUserDto.builder()
-                .id(siteUser.get().getId())
-                .password(siteUser.get().getPassword())
-                .username(siteUser.get().getUsername())
-                .email(siteUser.get().getEmail())
-                .build();
+        final SiteUserDto siteUserDto = siteUserDtoMapper.siteUserToSiteUserDto(siteUser.get());
+
+        return siteUserDto;
     }
 
-    public SiteUser siteUserFormToSiteUser(SiteUserDto siteUserDto) {
-        return SiteUser.builder()
-                .id(siteUserDto.getId())
-                .username(siteUserDto.getUsername())
-                .password(siteUserDto.getPassword())
-                .email(siteUserDto.getEmail())
-                .build();
-    }
-
-    public SiteUserDto siteUserToSiteUserForm(SiteUser siteUser) {
-        return SiteUserDto.builder()
-                .id(siteUser.getId())
-                .username(siteUser.getUsername())
-                .password(siteUser.getPassword())
-                .email(siteUser.getEmail())
-                .build();
-    }
 
 }
