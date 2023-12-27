@@ -7,9 +7,10 @@ import com.mysite.medium.comment.entity.Comment;
 import com.mysite.medium.comment.repository.CommentRepository;
 import com.mysite.medium.comment_vote.entity.CommentVote;
 import com.mysite.medium.comment_vote.repository.CommentVoteRepository;
+import com.mysite.medium.global.exception.EntityNotFoundException;
+import com.mysite.medium.global.exception.ErrorCode;
 import com.mysite.medium.user.entity.SiteUser;
 import com.mysite.medium.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,20 +32,16 @@ public class CommentVoteServiceImpl implements CommentVoteService {
 
     @Transactional
     public void toggleCommentVote(final Long commentId, final String username) {
-        final Optional<Comment> comment = commentRepository.findById(commentId);
-        if (comment.isEmpty()) {
-            throw new EntityNotFoundException("Comment Entity Not Found");
-        }
+        final Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new com.mysite.medium.global.exception.EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        final Optional<SiteUser> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            throw new EntityNotFoundException("User Entity Not Found");
-        }
+        final SiteUser user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        final Optional<CommentVote> commentVote = commentVoteRepository.findByCommentIdAndUserId(commentId,
-                user.get().getId());
+        final Optional<CommentVote> commentVote = commentVoteRepository.findByCommentIdAndUserId(commentId, user.getId());
+
         if (commentVote.isEmpty()) {
-            createCommentVote(comment.get(), user.get());
+            createCommentVote(comment, user);
         } else {
             deleteCommentVoteAllByCommentId(commentId);
         }
