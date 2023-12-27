@@ -1,17 +1,17 @@
 package com.mysite.medium.article.service;
 
-import com.mysite.medium.DataNotFoundException;
 import com.mysite.medium.article.dto.ArticleDto;
 import com.mysite.medium.article.dto.ArticleMapper;
 import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.article.repository.ArticleRepository;
+import com.mysite.medium.global.exception.EntityNotFoundException;
+import com.mysite.medium.global.exception.ErrorCode;
 import com.mysite.medium.user.dto.SiteUserDto;
 import com.mysite.medium.user.dto.SiteUserDtoMapper;
 import com.mysite.medium.user.entity.SiteUser;
 import com.mysite.medium.user.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,13 +37,10 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     public ArticleDto findArticleByArticleId(final Long id) {
-        final Optional<Article> article = this.articleRepository.findById(id);
+        final Article article = this.articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (article.isEmpty()) {
-            throw new DataNotFoundException("article not found");
-        }
-
-        final ArticleDto articleDto = articleMapper.articleToArticleDto(article.get());
+        final ArticleDto articleDto = articleMapper.articleToArticleDto(article);
 
         return articleDto;
     }
@@ -65,24 +62,18 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     public void modifyArticle(final Long articleId, final ArticleDto articleDto) {
 
-        final Optional<Article> article = articleRepository.findById(articleId);
+        final Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (article.isEmpty()) {
-            throw new DataNotFoundException("article not found");
-        }
-
-        article.get().modifyArticle(articleDto);
+        article.modifyArticle(articleDto);
     }
 
     public void deleteArticle(final Long articleId) {
 
-        final Optional<Article> article = articleRepository.findById(articleId);
+        final Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (article.isEmpty()) {
-            throw new DataNotFoundException("article not found");
-        }
-
-        this.articleRepository.delete(article.get());
+        this.articleRepository.delete(article);
     }
 
 }
