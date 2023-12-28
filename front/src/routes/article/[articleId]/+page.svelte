@@ -1,0 +1,243 @@
+<script>
+	import axios from 'axios';
+	import '../../../app.css';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+
+	let promise;
+	let articleId = $state();
+	let commentContent = $state();
+	let isModifyArticle = $state(false);
+	let isModifyComment = $state([{}]);
+
+	let article = $state({
+		subject: '',
+		author: '',
+		createDate: '',
+		modifyDate: '',
+		countVote: 0,
+		countComment: 0,
+		content: ''
+	});
+
+	let comments = $state([{}]);
+	let commentVoteDtos = $state([{}]);
+
+	let commentPageConfig = $state({
+		currentPage: 0,
+		totalElements: 0,
+		totalPages: 0
+	});
+
+	function formatDateTime(dateTimeString) {
+		const date = new Date(dateTimeString);
+		const options = {
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit'
+		};
+		return date.toLocaleDateString('ko-KR', options);
+	}
+
+	function loadArticle(commentPage) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				console.log('load');
+				const res = await axios.get(
+					`http://localhost:8080/article/${articleId}?page=${commentPage}`
+				);
+				console.log(res);
+				article.subject = res.data.articleDto.subject;
+				article.author = res.data.articleDto.author.username;
+				article.createDate = formatDateTime(res.data.articleDto.createDate);
+				article.modifyDate = formatDateTime(res.data.articleDto.modifyDate);
+				article.countVote = res.data.articleVoteDtos.length;
+				article.countComment = res.data.pagingComment.totalElements;
+				article.content = res.data.articleDto.content;
+
+				comments = res.data.pagingComment.content;
+				commentVoteDtos = res.data.commentVoteDtos;
+
+				commentPageConfig.currentPage = res.data.pagingComment.number;
+				commentPageConfig.totalElements = res.data.pagingComment.totalElements;
+				commentPageConfig.totalPages = res.data.pagingComment.totalPages;
+
+				console.log(comments[1].author.username);
+
+				resolve(article);
+			} catch (err) {
+				console.log('err');
+				reject(err);
+			}
+		});
+	}
+
+	function changeCommentPage(page) {
+		commentPageConfig.currentPage = page;
+		loadArticle(page);
+	}
+
+	function createPageArray(currentPage, totalPages) {
+		let pages = [];
+
+		const range = 5;
+		let start = Math.max(currentPage - range, 0);
+		let end = Math.min(start + range * 2, totalPages - 1);
+
+		if (totalPages - end < range) {
+			start = Math.max(totalPages - range * 2 - 1, 0);
+		}
+
+		for (let i = start; i <= end; i++) {
+			pages.push(i);
+		}
+		return pages;
+	}
+
+	onMount(() => {
+		articleId = $page.params['articleId'];
+		promise = loadArticle(commentPageConfig.currentPage);
+		// login();
+	});
+
+	// function modifyArticle() {
+	// 	return new Promise(async (resolve, reject) => {
+	// 		try {
+	// 			let res = await axios.put(`http://localhost:8080/article/${articleId}`, modifyForm, {
+	// 				withCredentials: true
+	// 			});
+	// 			console.log(res);
+	// 		} catch (error) {
+	// 			console.log(error);
+	// 		} finally {
+	// 			console.log('done modifyArticle');
+	// 		}
+	// 	});
+	// }
+
+	// function login() {
+	// 	return new Promise(async (resolve, reject) => {
+	// 		try {
+	// 			let res = await axios.post(
+	// 				`http://localhost:8080/member/login`,
+	// 				{ username: '123', password: '123' },
+	// 				{ withCredentials: true }
+	// 			);
+	// 			console.log(res);
+	// 		} catch (error) {
+	// 			reject(error);
+	// 		} finally {
+	// 			console.log('done');
+	// 		}
+	// 	});
+	// }
+
+	// function postComment() {
+	// 	return new Promise(async (resolve, reject) => {
+	// 		try {
+	// 			let res = await axios.post(
+	// 				`http://localhost:8080/article/${articleId}/comment`,
+	// 				{ content: commentContent },
+	// 				{ withCredentials: true }
+	// 			);
+	// 			console.log(res);
+	// 			article.comments.push(commentContent);
+	// 			console.log(commentContent);
+	// 			commentContent = '';
+	// 		} catch (error) {
+	// 			reject(error);
+	// 		} finally {
+	// 			console.log('done');
+	// 		}
+	// 	});
+	// }
+</script>
+
+{#if isModifyArticle}
+
+{:else}
+	{#await promise}
+		<h1 style="color: royalblue;">loading...</h1>
+	{:then ar}
+		<div>
+			<p>게시글 제목 : {article.subject}</p>
+		</div>
+		<div>
+			<p>게시글 작성 이름 : {article.author}</p>
+		</div>
+		<div>
+			<p>게시글 작성 기간 : {article.createDate}</p>
+		</div>
+		<div>
+			<p>게시글 수정 기간 : {article.modifyDate}</p>
+		</div>
+		<div>
+			<p>게시글 추천 수 : {article.countVote}</p>
+		</div>
+
+		<div>
+			<p>댓글 수 : {article.countComment}</p>
+		</div>
+		<div>
+			<p>게시글 내용 : {article.content}</p>
+		</div>
+
+		<hr />
+		<p>댓글</p>
+		<hr />
+
+		{#each comments as comment}
+			<!-- <div>
+			<p>댓글 작성자 : {comment.author.username}</p>
+		</div> -->
+			<div>
+				<p>댓글 작성자 :</p>
+			</div>
+			<div>
+				<p>댓글 : {comment.content}</p>
+			</div>
+			<div>
+				<p>댓글 좋아요 수 : {commentVoteDtos[comment.id]}</p>
+			</div>
+			<hr />
+		{:else}
+			<div>
+				<p>댓글이 없어습니다 OTL</p>
+			</div>
+		{/each}
+
+		<!-- 페이지네이션 컨트롤 -->
+		<div>
+			<button
+				on:click={() => changeCommentPage(commentPageConfig.currentPage - 1)}
+				disabled={commentPageConfig.currentPage <= 0}
+				class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+			>
+				이전
+			</button>
+			<span>페이지 {commentPageConfig.currentPage + 1} / {commentPageConfig.totalPages}</span>
+
+			<div class="pagination">
+				{#each createPageArray(commentPageConfig.currentPage, commentPageConfig.totalPages) as page}
+					<button
+						on:click={() => changeCommentPage(page)}
+						class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+					>
+						{`Page ${page + 1}`}
+					</button>
+				{/each}
+			</div>
+			<button
+				on:click={() => changeCommentPage(commentPageConfig.currentPage + 1)}
+				disabled={commentPageConfig.currentPage >= commentPageConfig.totalPages - 1}
+				class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+			>
+				다음
+			</button>
+		</div>
+	{:catch err}
+		<h1 style="color: red;">{err.message}</h1>
+	{/await}
+{/if}
