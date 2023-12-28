@@ -43,6 +43,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .select(new QArticleDto(
                         article.id,
                         article.subject,
+                        article.content,
                         new QSiteUserDto(article.author.username),
                         article.createDate,
                         comment.count()

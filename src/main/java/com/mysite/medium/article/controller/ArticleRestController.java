@@ -32,12 +32,12 @@ public class ArticleRestController {
     private final ArticleVoteService articleVoteService;
     private final CommentVoteService commentVoteService;
 
-    @GetMapping("/")
-    public ResponseEntity<Slice<ArticleDto>> listArticles(@RequestParam(value = "page", defaultValue = "0") int page,
+    @GetMapping("/article")
+    public ResponseEntity<Page<ArticleDto>> listArticles(@RequestParam(value = "page", defaultValue = "0") int page,
                                                           @RequestParam(value = "kw", defaultValue = "") String kw) {
 
-        Slice<ArticleDto> slice = this.articleService.getArticleSliceAll(page, kw);
-        return ResponseEntity.ok(slice);
+        Page<ArticleDto> articleAll = this.articleService.getArticleAll(page, kw);
+        return ResponseEntity.ok(articleAll);
     }
 
     /*@PostMapping("/")
