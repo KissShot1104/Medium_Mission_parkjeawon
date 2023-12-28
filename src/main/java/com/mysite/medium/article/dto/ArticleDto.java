@@ -44,6 +44,15 @@ public class ArticleDto {
     }
 
     @QueryProjection
+    public ArticleDto(Long id, String subject, String content, SiteUserDto author, LocalDateTime createDate, Long commentCount) {
+        this.id = id;
+        this.subject = subject;
+        this.content = content;
+        this.author = author;
+        this.createDate = createDate;
+    }
+
+    @QueryProjection
     public ArticleDto(Long id, String subject, SiteUserDto author, LocalDateTime createDate) {
         this.id = id;
         this.subject = subject;
