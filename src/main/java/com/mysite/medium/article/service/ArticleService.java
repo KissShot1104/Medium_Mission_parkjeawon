@@ -14,7 +14,7 @@ public interface ArticleService {
     Slice<ArticleDto> getArticleSliceAll(final int page, final String kw);
     ArticleDto findArticleByArticleId(Long id);
 
-    void createArticle(ArticleDto articleDto, Principal principal);
+    Long createArticle(ArticleDto articleDto, Principal principal);
 
     void modifyArticle(Long articleId, ArticleDto articleDto);
 

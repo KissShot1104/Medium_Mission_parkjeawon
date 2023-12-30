@@ -9,21 +9,27 @@ import com.mysite.medium.comment.dto.CommentDto;
 import com.mysite.medium.comment.service.CommentService;
 import com.mysite.medium.comment_vote.service.CommentVoteService;
 import com.mysite.medium.user.service.UserService;
+import jakarta.validation.Valid;
+import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/article")
 public class ArticleRestController {
 
     private final ArticleService articleService;
@@ -32,7 +38,7 @@ public class ArticleRestController {
     private final ArticleVoteService articleVoteService;
     private final CommentVoteService commentVoteService;
 
-    @GetMapping("/article")
+    @GetMapping
     public ResponseEntity<Page<ArticleDto>> listArticles(@RequestParam(value = "page", defaultValue = "0") int page,
                                                           @RequestParam(value = "kw", defaultValue = "") String kw) {
 
@@ -40,16 +46,16 @@ public class ArticleRestController {
         return ResponseEntity.ok(articleAll);
     }
 
-    /*@PostMapping("/")
-    public ResponseEntity<Void> createArticle(@RequestBody @Valid ArticleDto articleDto,
-                                              BindingResult bindingResult,
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping
+    public ResponseEntity<Void> createArticle(@RequestPart @Valid ArticleDto articleDto,
                                               Principal principal) {
 
-        articleService.createArticle(articleDto, principal);
-        return ResponseEntity.created
-    }*/
+        final Long savedId = articleService.createArticle(articleDto, principal);
+        return ResponseEntity.created(URI.create("/article/" + savedId)).build();
+    }
 
-    @GetMapping("/article/{articleId}")
+    @GetMapping("/{articleId}")
     public ResponseEntity<ArticleDetailDto> detailArticle(@PathVariable("articleId") Long articleId,
                                                           @RequestParam(value = "page", defaultValue = "0") int page) {
 

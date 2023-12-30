@@ -56,9 +56,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Transactional
-    public void createArticle(final ArticleDto articleDto, final Principal principal) {
+    public Long createArticle(final ArticleDto articleDto, final Principal principal) {
 
-//        final SiteUser siteUser = siteUserDtoMapper.siteUserDtoToSiteUser(siteUserDto);
+
         final SiteUser siteUser = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
@@ -68,7 +68,8 @@ public class ArticleServiceImpl implements ArticleService {
                 .author(siteUser)
                 .build();
 
-        articleRepository.save(article);
+        final Article savedArticle = articleRepository.save(article);
+        return savedArticle.getId();
     }
 
     @Transactional
