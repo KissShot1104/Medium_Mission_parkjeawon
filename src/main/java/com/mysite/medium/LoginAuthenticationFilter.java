@@ -12,12 +12,24 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 
 public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     public LoginAuthenticationFilter(final String defaultFilterProcessesUrl,
-                                     final AuthenticationManager authenticationManager) {
+                                         final AuthenticationManager authenticationManager,
+                                     final AuthenticationSuccessHandler authenticationSuccessHandler) {
         super(defaultFilterProcessesUrl, authenticationManager);
+        setAuthenticationSuccessHandler(authenticationSuccessHandler);
+        setSecurityContextRepository(
+                new DelegatingSecurityContextRepository(
+                        new HttpSessionSecurityContextRepository(),
+                        new RequestAttributeSecurityContextRepository()
+                )
+        );
     }
 
     @Override
@@ -27,9 +39,9 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
 
         String method = request.getMethod();
 
-        if (!method.equals("POST")) {
-            throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
-        }
+//        if (!method.equals("POST")) {
+//            throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
+//        }
 
         ServletInputStream inputStream = request.getInputStream();
 
