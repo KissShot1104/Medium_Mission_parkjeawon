@@ -84,7 +84,7 @@
 //        }
 //
 //        SiteUserDto siteUser = this.userService.getUser(principal.getName());
-//        this.articleService.createArticle(articleDto, siteUser);
+//        this.articleService.createArticle(articleDto, principal);
 //
 //        return "redirect:/article/list";
 //    }
