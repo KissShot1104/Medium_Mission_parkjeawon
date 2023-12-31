@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +41,7 @@ public class ArticleRestController {
 
     @GetMapping
     public ResponseEntity<Page<ArticleDto>> listArticles(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                          @RequestParam(value = "kw", defaultValue = "") String kw) {
+                                                         @RequestParam(value = "kw", defaultValue = "") String kw) {
 
         Page<ArticleDto> articleAll = this.articleService.getArticleAll(page, kw);
         return ResponseEntity.ok(articleAll);
@@ -59,11 +59,18 @@ public class ArticleRestController {
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{articleId}")
     public ResponseEntity<Void> modifyArticle(@RequestPart @Valid ArticleDto articleDto,
-                                                    @PathVariable("articleId") Long articleId,
-                                                    Principal principal) {
+                                              @PathVariable("articleId") Long articleId) {
         articleService.modifyArticle(articleId, articleDto);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{articleId}")
+    public ResponseEntity<Void> deleteArticle(@PathVariable("articleId") Long articleId) {
+        articleService.deleteArticle(articleId);
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{articleId}")
