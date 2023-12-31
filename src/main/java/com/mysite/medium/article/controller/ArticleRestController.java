@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +54,16 @@ public class ArticleRestController {
 
         final Long savedId = articleService.createArticle(articleDto, principal);
         return ResponseEntity.created(URI.create("/article/" + savedId)).build();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/{articleId}")
+    public ResponseEntity<Void> modifyArticle(@RequestPart @Valid ArticleDto articleDto,
+                                                    @PathVariable("articleId") Long articleId,
+                                                    Principal principal) {
+        articleService.modifyArticle(articleId, articleDto);
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{articleId}")
