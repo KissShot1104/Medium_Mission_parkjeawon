@@ -22,7 +22,8 @@
 
 	let comments = $state([{}]);
 	let commentVoteDtos = $state([{}]);
-	let inputComment = $state("");
+	let inputComment = $state('');
+	let modifyInputComment = $state('');
 
 	let commentPageConfig = $state({
 		currentPage: 0,
@@ -71,6 +72,12 @@
 				commentPageConfig.totalElements = res.data.pagingComment.totalElements;
 				commentPageConfig.totalPages = res.data.pagingComment.totalPages;
 
+				for (let i = 0; i < comments.length; i++) {
+					isModifyComment.push({
+						[comments[i].id]: false
+					});
+				}
+				console.log(isModifyComment);
 				console.log(comments[1].author.username);
 
 				resolve(article);
@@ -156,6 +163,26 @@
 			}
 		});
 	}
+
+	function modifyComment(commentId) {
+		let formData = new FormData();
+
+		const commentData = JSON.stringify({ content: modifyInputComment });
+		formData.append('commentDto', new Blob([commentData], { type: 'application/json' }));
+
+		axios.patch(`http://localhost:8080/article/comment/modify/${commentId}`, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			},
+			withCredentials: true
+		});
+
+		comments = [...comments, modifyInputComment];
+		modifyInputComment = '';
+		window.location.href=`http://localhost:5173/article/${articleId}`;
+	}
+
+	
 </script>
 
 {#await promise}
@@ -218,7 +245,7 @@
 			<p>댓글 작성자 : {comment.author.username}</p>
 		</div> -->
 		<div>
-			<p>댓글 작성자 : </p>
+			<p>댓글 작성자 :</p>
 		</div>
 		<div>
 			<p>댓글 : {comment.content}</p>
@@ -228,6 +255,35 @@
 		</div>
 		<div>
 			<p>댓글 생성일 : {formatDateTime(comment.createDate)}</p>
+		</div>
+		<div>
+			{#if isModifyComment[comment.id]}
+				<textarea
+					class="textarea textarea-primary"
+					bind:value={modifyInputComment}
+					placeholder="댓글을 입력해주세요"
+				></textarea>
+				<button
+					class="btn btn-neutral"
+					on:click={() => {
+						modifyComment(comment.id);
+						isModifyComment[comment.id] = !isModifyComment[comment.id];
+					}}>수정 완료</button
+				>
+				<button
+					class="btn btn-neutral"
+					on:click={() => {
+						isModifyComment[comment.id] = !isModifyComment[comment.id];
+					}}>취소</button
+				>
+			{:else}
+				<button
+					class="btn btn-neutral"
+					on:click={() => {
+						isModifyComment[comment.id] = !isModifyComment[comment.id];
+					}}>댓글 수정</button
+				>
+			{/if}
 		</div>
 		<hr />
 	{:else}
