@@ -34,26 +34,26 @@ public class CommentController {
     private final UserService userService;
     private final CommentVoteService commentVoteService;
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/create/{articleId}")
-    public String createComment(Model model,
-                                @PathVariable("articleId") Long articleId,
-                                @Validated @ModelAttribute("commentDto") CommentDto commentDto,
-                                BindingResult bindingResult,
-                                Principal principal) {
-
-        ArticleDto articleDto = this.articleService.findArticleByArticleId(articleId);
-        SiteUserDto siteUser = this.userService.getUser(principal.getName());
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("article", articleDto);
-            return "article_detail";
-        }
-        Long commentId = commentService.createComment(articleId, commentDto, siteUser);
-
-        return String.format("redirect:/article/%s#comment_%s",
-                articleId, commentId);
-    }
+//    @PreAuthorize("isAuthenticated()")
+//    @PostMapping("/create/{articleId}")
+//    public String createComment(Model model,
+//                                @PathVariable("articleId") Long articleId,
+//                                @Validated @ModelAttribute("commentDto") CommentDto commentDto,
+//                                BindingResult bindingResult,
+//                                Principal principal) {
+//
+//        ArticleDto articleDto = this.articleService.findArticleByArticleId(articleId);
+//        SiteUserDto siteUser = this.userService.getUser(principal.getName());
+//
+//        if (bindingResult.hasErrors()) {
+//            model.addAttribute("article", articleDto);
+//            return "article_detail";
+//        }
+//        Long commentId = commentService.createComment(articleId, commentDto, siteUser);
+//
+//        return String.format("redirect:/article/%s#comment_%s",
+//                articleId, commentId);
+//    }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{commentId}")

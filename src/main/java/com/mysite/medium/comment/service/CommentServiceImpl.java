@@ -11,6 +11,9 @@ import com.mysite.medium.global.exception.EntityNotFoundException;
 import com.mysite.medium.global.exception.ErrorCode;
 import com.mysite.medium.user.dto.SiteUserDto;
 import com.mysite.medium.user.dto.SiteUserDtoMapper;
+import com.mysite.medium.user.entity.SiteUser;
+import com.mysite.medium.user.repository.UserRepository;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final ArticleRepository articleRepository;
     private final CommentMapper commentMapper;
-    private final SiteUserDtoMapper siteUserDtoMapper;
+    private final UserRepository userRepository;
 
     public Page<CommentDto> findCommentAllByArticleId(final int page, final Long id) {
         final List<Order> sorts = new ArrayList<>();
@@ -41,15 +44,18 @@ public class CommentServiceImpl implements CommentService {
         return commentPaging;
     }
 
-    public Long createComment(final Long articleId, final CommentDto commentDto, final SiteUserDto author) {
+    public Long createComment(final Long articleId, final CommentDto commentDto, final Principal principal) {
 
         final Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        final SiteUser siteUser = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         final Comment comment = Comment.builder()
                 .content(commentDto.getContent())
                 .article(article)
-                .author(siteUserDtoMapper.siteUserDtoToSiteUser(author))
+                .author(siteUser)
                 .build();
 
         commentRepository.save(comment);

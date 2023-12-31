@@ -2,11 +2,12 @@ package com.mysite.medium.comment.service;
 
 import com.mysite.medium.comment.dto.CommentDto;
 import com.mysite.medium.user.dto.SiteUserDto;
+import java.security.Principal;
 import org.springframework.data.domain.Page;
 
 public interface CommentService {
 
-    Long createComment(final Long articleId, final CommentDto commentDto, final SiteUserDto author);
+    Long createComment(final Long articleId, final CommentDto commentDto, final Principal principal);
 
     Page<CommentDto> findCommentAllByArticleId(final int page, final Long id);
 
