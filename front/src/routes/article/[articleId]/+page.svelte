@@ -7,7 +7,6 @@
 
 	let promise = Promise.resolve([]);
 	let articleId = $state();
-	let commentContent = $state();
 	let isModifyArticle = $state(false);
 	let isModifyComment = $state([{}]);
 
@@ -23,6 +22,7 @@
 
 	let comments = $state([{}]);
 	let commentVoteDtos = $state([{}]);
+	let inputComment = $state("");
 
 	let commentPageConfig = $state({
 		currentPage: 0,
@@ -43,8 +43,9 @@
 	}
 
 	function toggleVoteArticle() {
-		let res = axios.post(`http://localhost:8080/article/vote/${articleId}`,null,
-		{ withCredentials: true });
+		let res = axios.post(`http://localhost:8080/article/vote/${articleId}`, null, {
+			withCredentials: true
+		});
 	}
 
 	function loadArticle(commentPage) {
@@ -124,30 +125,37 @@
 			} catch (error) {
 				reject(error);
 			} finally {
-				console.log("long done");
+				console.log('long done');
 			}
 		});
 	}
 
-	// function postComment() {
-	// 	return new Promise(async (resolve, reject) => {
-	// 		try {
-	// 			let res = await axios.post(
-	// 				`http://localhost:8080/article/${articleId}/comment`,
-	// 				{ content: commentContent },
-	// 				{ withCredentials: true }
-	// 			);
-	// 			console.log(res);
-	// 			article.comments.push(commentContent);
-	// 			console.log(commentContent);
-	// 			commentContent = '';
-	// 		} catch (error) {
-	// 			reject(error);
-	// 		} finally {
-	// 			console.log('done');
-	// 		}
-	// 	});
-	// }
+	function postComment() {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let formData = new FormData();
+
+				const commentData = JSON.stringify({ content: inputComment });
+				formData.append('commentDto', new Blob([commentData], { type: 'application/json' }));
+
+				let res = await axios.post(`http://localhost:8080/article/${articleId}/comment`, formData, {
+					headers: {
+						'Content-Type': 'multipart/form-data'
+					},
+					withCredentials: true
+				});
+
+				console.log(res);
+				comments = [...comments, inputComment];
+				inputComment = '';
+				comments = comments;
+			} catch (error) {
+				reject(error);
+			} finally {
+				console.log('done');
+			}
+		});
+	}
 </script>
 
 {#await promise}
@@ -171,7 +179,7 @@
 			class="btn btn-neutral"
 			on:click={() => {
 				toggleVoteArticle();
-				window.location.href=`http://localhost:5173/article/${articleId}`;
+				window.location.href = `http://localhost:5173/article/${articleId}`;
 			}}>추천!</button
 		>
 	</div>
@@ -210,7 +218,7 @@
 			<p>댓글 작성자 : {comment.author.username}</p>
 		</div> -->
 		<div>
-			<p>댓글 작성자 :</p>
+			<p>댓글 작성자 : </p>
 		</div>
 		<div>
 			<p>댓글 : {comment.content}</p>
@@ -218,12 +226,29 @@
 		<div>
 			<p>댓글 좋아요 수 : {commentVoteDtos[comment.id]}</p>
 		</div>
+		<div>
+			<p>댓글 생성일 : {formatDateTime(comment.createDate)}</p>
+		</div>
 		<hr />
 	{:else}
 		<div>
 			<p>댓글이 없어습니다 OTL</p>
 		</div>
 	{/each}
+
+	<div>
+		<textarea
+			class="textarea textarea-primary"
+			bind:value={inputComment}
+			placeholder="댓글을 입력해주세요"
+		></textarea>
+		<button
+			class="btn btn-neutral"
+			on:click={() => {
+				postComment();
+			}}>작성 완료</button
+		>
+	</div>
 
 	<!-- 페이지네이션 컨트롤 -->
 	<div>
