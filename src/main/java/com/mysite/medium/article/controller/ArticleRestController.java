@@ -59,16 +59,19 @@ public class ArticleRestController {
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{articleId}")
     public ResponseEntity<Void> modifyArticle(@RequestPart @Valid ArticleDto articleDto,
-                                              @PathVariable("articleId") Long articleId) {
-        articleService.modifyArticle(articleId, articleDto);
+                                              @PathVariable("articleId") Long articleId,
+                                              Principal principal) {
+
+        articleService.modifyArticle(articleId, articleDto, principal);
 
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @DeleteMapping("/{articleId}")
-    public ResponseEntity<Void> deleteArticle(@PathVariable("articleId") Long articleId) {
-        articleService.deleteArticle(articleId);
+    public ResponseEntity<Void> deleteArticle(@PathVariable("articleId") Long articleId,
+                                              Principal principal) {
+        articleService.deleteArticle(articleId, principal);
 
         return ResponseEntity.noContent().build();
     }

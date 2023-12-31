@@ -3,7 +3,6 @@ package com.mysite.medium.article.dto;
 import com.mysite.medium.user.dto.SiteUserDto;
 import com.querydsl.core.annotations.QueryProjection;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import lombok.*;
@@ -59,5 +58,4 @@ public class ArticleDto {
         this.author = author;
         this.createDate = createDate;
     }
-
 }

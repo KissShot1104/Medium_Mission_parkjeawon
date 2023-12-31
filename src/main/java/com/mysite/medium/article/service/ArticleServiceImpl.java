@@ -73,20 +73,24 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Transactional
-    public void modifyArticle(final Long articleId, final ArticleDto articleDto) {
+    public void modifyArticle(final Long articleId, final ArticleDto articleDto, final Principal principal) {
 
         final Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        article.checkAuthor(principal);
 
         article.modifyArticle(articleDto);
     }
 
-    public void deleteArticle(final Long articleId) {
+    public void deleteArticle(final Long articleId, final Principal principal) {
 
         final Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        this.articleRepository.delete(article);
+        article.checkAuthor(principal);
+
+        articleRepository.delete(article);
     }
 
 }
