@@ -1,6 +1,8 @@
 package com.mysite.medium.user.service;
 
 import com.mysite.medium.DataNotFoundException;
+import com.mysite.medium.global.exception.AuthException;
+import com.mysite.medium.global.exception.ErrorCode;
 import com.mysite.medium.user.dto.SiteUserDto;
 import com.mysite.medium.user.dto.SiteUserDtoMapper;
 import com.mysite.medium.user.dto.UserCreateDto;
@@ -23,6 +25,17 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void createUser(final UserCreateDto userCreateDto) {
 
+        Optional<SiteUser> duplicatedLoginId = userRepository.findByUsername(userCreateDto.getUsername());
+        if (duplicatedLoginId.isPresent()) {
+            throw new AuthException(ErrorCode.DUPLICATED_LOGIN_ID);
+        }
+        Optional<SiteUser> duplicatedEmail = userRepository.findByEmail(userCreateDto.getEmail());
+        if (duplicatedEmail.isPresent()) {
+            throw new AuthException(ErrorCode.DUPLICATED_EMAIL);
+        }
+
+        userCreateDto.checkEqualsPassword();
+
         final SiteUser user = SiteUser.builder()
                 .username(userCreateDto.getUsername())
                 .email(userCreateDto.getEmail())
@@ -43,6 +56,7 @@ public class UserServiceImpl implements UserService {
 
         return siteUserDto;
     }
+
 
 
 }

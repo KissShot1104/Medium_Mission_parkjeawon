@@ -1,5 +1,8 @@
 package com.mysite.medium.user.dto;
 
+import com.mysite.medium.global.exception.AuthException;
+import com.mysite.medium.global.exception.ErrorCode;
+import com.mysite.medium.global.exception.InvalidValueException;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -26,4 +29,10 @@ public class UserCreateDto {
     @NotBlank(message = "이메일은 필수항목입니다.")
     @Email
     private String email;
+
+    public void checkEqualsPassword() {
+        if (!password1.equals(password2)) {
+            throw new AuthException(ErrorCode.INVALID_PASSWORD_MATCH);
+        }
+    }
 }

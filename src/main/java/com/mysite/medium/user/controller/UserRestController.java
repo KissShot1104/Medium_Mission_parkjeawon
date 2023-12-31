@@ -1,21 +1,26 @@
-//package com.mysite.medium.user.controller;
-//
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.web.bind.annotation.CrossOrigin;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//@RestController
-//@CrossOrigin(origins = "http://localhost:5173")
-//@RequiredArgsConstructor
-//@RequestMapping("/user")
-//public class UserRestController {
-//
-//    @PostMapping("/login")
-//    public String login(@RequestParam) {
-//
-//    }
-//}
+package com.mysite.medium.user.controller;
+
+import com.mysite.medium.user.dto.UserCreateDto;
+import com.mysite.medium.user.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/user")
+public class UserRestController {
+    private final UserService userService;
+
+    @PostMapping("/signup")
+    public ResponseEntity<Void> login(@RequestPart @Valid UserCreateDto userCreateDto) {
+
+        userService.createUser(userCreateDto);
+
+        return ResponseEntity.ok().build();
+    }
+}
