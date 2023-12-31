@@ -3,8 +3,9 @@
 	import '../../../app.css';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import ModifyArticle from './modify/+page.svelte';
 
-	let promise;
+	let promise = Promise.resolve([]);
 	let articleId = $state();
 	let commentContent = $state();
 	let isModifyArticle = $state(false);
@@ -96,43 +97,30 @@
 		return pages;
 	}
 
+	function deleteArticle() {
+		axios.delete(`http://localhost:8080/article/${articleId}`, { withCredentials: true });
+	}
+
 	onMount(() => {
 		articleId = $page.params['articleId'];
 		promise = loadArticle(commentPageConfig.currentPage);
-		// login();
+		login();
 	});
 
-	// function modifyArticle() {
-	// 	return new Promise(async (resolve, reject) => {
-	// 		try {
-	// 			let res = await axios.put(`http://localhost:8080/article/${articleId}`, modifyForm, {
-	// 				withCredentials: true
-	// 			});
-	// 			console.log(res);
-	// 		} catch (error) {
-	// 			console.log(error);
-	// 		} finally {
-	// 			console.log('done modifyArticle');
-	// 		}
-	// 	});
-	// }
-
-	// function login() {
-	// 	return new Promise(async (resolve, reject) => {
-	// 		try {
-	// 			let res = await axios.post(
-	// 				`http://localhost:8080/member/login`,
-	// 				{ username: '123', password: '123' },
-	// 				{ withCredentials: true }
-	// 			);
-	// 			console.log(res);
-	// 		} catch (error) {
-	// 			reject(error);
-	// 		} finally {
-	// 			console.log('done');
-	// 		}
-	// 	});
-	// }
+	function login() {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let res = await axios.post(
+					`http://localhost:8080/api/login`,
+					{ username: '3', password: '3' },
+					{ withCredentials: true }
+				);
+				console.log(res);
+			} catch (error) {
+				reject(error);
+			}
+		});
+	}
 
 	// function postComment() {
 	// 	return new Promise(async (resolve, reject) => {
@@ -155,89 +143,104 @@
 	// }
 </script>
 
-{#if isModifyArticle}
+{#await promise}
+	<h1 style="color: royalblue;">loading...</h1>
+{:then ar}
+	<div>
+		<p>게시글 제목 : {article.subject}</p>
+	</div>
+	<div>
+		<p>게시글 작성 이름 : {article.author}</p>
+	</div>
+	<div>
+		<p>게시글 작성 기간 : {article.createDate}</p>
+	</div>
+	<div>
+		<p>게시글 수정 기간 : {article.modifyDate}</p>
+	</div>
+	<div>
+		<p>게시글 추천 수 : {article.countVote}</p>
+	</div>
 
-{:else}
-	{#await promise}
-		<h1 style="color: royalblue;">loading...</h1>
-	{:then ar}
-		<div>
-			<p>게시글 제목 : {article.subject}</p>
-		</div>
-		<div>
-			<p>게시글 작성 이름 : {article.author}</p>
-		</div>
-		<div>
-			<p>게시글 작성 기간 : {article.createDate}</p>
-		</div>
-		<div>
-			<p>게시글 수정 기간 : {article.modifyDate}</p>
-		</div>
-		<div>
-			<p>게시글 추천 수 : {article.countVote}</p>
-		</div>
+	<div>
+		<p>댓글 수 : {article.countComment}</p>
+	</div>
+	<div>
+		<p>게시글 내용 : {article.content}</p>
+	</div>
+	<div>
+		<a
+			class="btn btn-neutral"
+			href={`${articleId}/modify`}
+			on:click={() => {
+				localStorage.setItem('subject', article.subject);
+				localStorage.setItem('content', article.content);
+				location.href = `${articleId}/modify`;
+			}}>수정</a
+		>
+		<button
+			class="btn btn-neutral"
+			on:click={() => {
+				deleteArticle();
+				window.location.href = 'http://localhost:5173/article';
+			}}>삭제</button
+		>
+		<a class="btn btn-neutral" href="../">뒤로가기</a>
+	</div>
 
-		<div>
-			<p>댓글 수 : {article.countComment}</p>
-		</div>
-		<div>
-			<p>게시글 내용 : {article.content}</p>
-		</div>
+	<hr />
+	<p>댓글</p>
+	<hr />
 
-		<hr />
-		<p>댓글</p>
-		<hr />
-
-		{#each comments as comment}
-			<!-- <div>
+	{#each comments as comment}
+		<!-- <div>
 			<p>댓글 작성자 : {comment.author.username}</p>
 		</div> -->
-			<div>
-				<p>댓글 작성자 :</p>
-			</div>
-			<div>
-				<p>댓글 : {comment.content}</p>
-			</div>
-			<div>
-				<p>댓글 좋아요 수 : {commentVoteDtos[comment.id]}</p>
-			</div>
-			<hr />
-		{:else}
-			<div>
-				<p>댓글이 없어습니다 OTL</p>
-			</div>
-		{/each}
-
-		<!-- 페이지네이션 컨트롤 -->
 		<div>
-			<button
-				on:click={() => changeCommentPage(commentPageConfig.currentPage - 1)}
-				disabled={commentPageConfig.currentPage <= 0}
-				class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-			>
-				이전
-			</button>
-			<span>페이지 {commentPageConfig.currentPage + 1} / {commentPageConfig.totalPages}</span>
-
-			<div class="pagination">
-				{#each createPageArray(commentPageConfig.currentPage, commentPageConfig.totalPages) as page}
-					<button
-						on:click={() => changeCommentPage(page)}
-						class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-					>
-						{`Page ${page + 1}`}
-					</button>
-				{/each}
-			</div>
-			<button
-				on:click={() => changeCommentPage(commentPageConfig.currentPage + 1)}
-				disabled={commentPageConfig.currentPage >= commentPageConfig.totalPages - 1}
-				class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-			>
-				다음
-			</button>
+			<p>댓글 작성자 :</p>
 		</div>
-	{:catch err}
-		<h1 style="color: red;">{err.message}</h1>
-	{/await}
-{/if}
+		<div>
+			<p>댓글 : {comment.content}</p>
+		</div>
+		<div>
+			<p>댓글 좋아요 수 : {commentVoteDtos[comment.id]}</p>
+		</div>
+		<hr />
+	{:else}
+		<div>
+			<p>댓글이 없어습니다 OTL</p>
+		</div>
+	{/each}
+
+	<!-- 페이지네이션 컨트롤 -->
+	<div>
+		<button
+			on:click={() => changeCommentPage(commentPageConfig.currentPage - 1)}
+			disabled={commentPageConfig.currentPage <= 0}
+			class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+		>
+			이전
+		</button>
+		<span>페이지 {commentPageConfig.currentPage + 1} / {commentPageConfig.totalPages}</span>
+
+		<div class="pagination">
+			{#each createPageArray(commentPageConfig.currentPage, commentPageConfig.totalPages) as page}
+				<button
+					on:click={() => changeCommentPage(page)}
+					class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+				>
+					{`Page ${page + 1}`}
+				</button>
+			{/each}
+		</div>
+		<button
+			on:click={() => changeCommentPage(commentPageConfig.currentPage + 1)}
+			disabled={commentPageConfig.currentPage >= commentPageConfig.totalPages - 1}
+			class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+		>
+			다음
+		</button>
+	</div>
+{:catch err}
+	<h1 style="color: red;">{err.message}</h1>
+{/await}
