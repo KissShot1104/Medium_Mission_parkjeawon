@@ -67,7 +67,7 @@ public class ArticleRestController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{articleId}")
     public ResponseEntity<Void> deleteArticle(@PathVariable("articleId") Long articleId,
                                               Principal principal) {
