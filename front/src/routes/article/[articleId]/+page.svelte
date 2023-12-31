@@ -179,14 +179,21 @@
 
 		comments = [...comments, modifyInputComment];
 		modifyInputComment = '';
-		window.location.href=`http://localhost:5173/article/${articleId}`;
+		window.location.href = `http://localhost:5173/article/${articleId}`;
 	}
 
 	function deleteComment(commentId) {
 		axios.delete(`http://localhost:8080/article/comment/delete/${commentId}`, {
 			withCredentials: true
-		})
-		window.location.href=`http://localhost:5173/article/${articleId}`;
+		});
+		window.location.href = `http://localhost:5173/article/${articleId}`;
+	}
+
+	function voteComment(commentId) {
+		axios.post(`http://localhost:8080/comment/vote/${commentId}`, null, {
+			withCredentials: true
+		});
+		window.location.href = `http://localhost:5173/article/${articleId}`;
 	}
 </script>
 
@@ -293,6 +300,13 @@
 					on:click={() => {
 						deleteComment(comment.id);
 					}}>댓글 삭제</button
+				>
+
+				<button
+					class="btn btn-neutral"
+					on:click={() => {
+						voteComment(comment.id);
+					}}>댓글 개추</button
 				>
 			{/if}
 		</div>

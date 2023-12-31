@@ -11,6 +11,7 @@ import com.mysite.medium.global.exception.EntityNotFoundException;
 import com.mysite.medium.global.exception.ErrorCode;
 import com.mysite.medium.user.entity.SiteUser;
 import com.mysite.medium.user.repository.UserRepository;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,11 @@ public class CommentVoteServiceImpl implements CommentVoteService {
 
 
     @Transactional
-    public void toggleCommentVote(final Long commentId, final String username) {
+    public void toggleCommentVote(final Long commentId, final Principal principal) {
         final Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new com.mysite.medium.global.exception.EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        final SiteUser user = userRepository.findByUsername(username)
+        final SiteUser user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         final Optional<CommentVote> commentVote = commentVoteRepository.findByCommentIdAndUserId(commentId, user.getId());
@@ -61,12 +62,6 @@ public class CommentVoteServiceImpl implements CommentVoteService {
     public void deleteCommentVoteAllByCommentId(final Long commentId) {
         commentVoteRepository.deleteCommentVoteAllByCommentId(commentId);
     }
-
-    @Transactional
-    public void deleteCommentVoteAllByArticleId(final Long articleId) {
-        commentVoteRepository.deleteAllByArticleId(articleId);
-    }
-
 
     public Map<Long, Long> getCommentLikesForArticle(final Long articleId) {//article 생겼으니 다시 생각해보자
         final List<Comment> comments = commentRepository.findAllByArticleId(articleId);
