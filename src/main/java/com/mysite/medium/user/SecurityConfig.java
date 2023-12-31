@@ -4,9 +4,11 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 
 import com.mysite.medium.BootAuthenticationSuccessHandler;
 import com.mysite.medium.LoginAuthenticationFilter;
+import java.nio.charset.StandardCharsets;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -55,6 +57,18 @@ public class SecurityConfig {
                                 authenticationManager,
                                 authenticationSuccessHandler()),
                         UsernamePasswordAuthenticationFilter.class)
+                .logout(logoutConfig ->
+                        logoutConfig
+                                .logoutUrl("/api/logout")
+                                .logoutSuccessHandler(
+                                        ((request, response, authentication) -> {
+                                            System.out.println("로그아웃 성공");
+
+                                            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+                                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                                            response.getWriter().println("로그아웃 성공!");
+                                        })
+                                ))
                 .headers(
                         headersConfigurer ->
                                 headersConfigurer
