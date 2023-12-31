@@ -182,7 +182,12 @@
 		window.location.href=`http://localhost:5173/article/${articleId}`;
 	}
 
-	
+	function deleteComment(commentId) {
+		axios.delete(`http://localhost:8080/article/comment/delete/${commentId}`, {
+			withCredentials: true
+		})
+		window.location.href=`http://localhost:5173/article/${articleId}`;
+	}
 </script>
 
 {#await promise}
@@ -282,6 +287,12 @@
 					on:click={() => {
 						isModifyComment[comment.id] = !isModifyComment[comment.id];
 					}}>댓글 수정</button
+				>
+				<button
+					class="btn btn-neutral"
+					on:click={() => {
+						deleteComment(comment.id);
+					}}>댓글 삭제</button
 				>
 			{/if}
 		</div>
