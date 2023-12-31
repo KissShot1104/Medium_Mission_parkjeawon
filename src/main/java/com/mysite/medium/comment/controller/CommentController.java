@@ -71,27 +71,27 @@ public class CommentController {
         return "comment_form";
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/modify/{commentId}")
-    public String modifyComment(@Validated CommentDto commentDto,
-                                BindingResult bindingResult,
-                                @PathVariable("commentId") Long commentId,
-                                Principal principal) {
-
-        if (bindingResult.hasErrors()) {
-            return "comment_form";
-        }
-
-        CommentDto existingComment = commentService.findCommentByCommendId(commentId);
-        if (!existingComment.getAuthor().getUsername().equals(principal.getName())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
-        }
-
-        commentService.modifyComment(commentId, commentDto);
-
-        return String.format("redirect:/article/%s#comment_%s",
-                existingComment.getArticle().getId(), existingComment.getId());
-    }
+//    @PreAuthorize("isAuthenticated()")
+//    @PostMapping("/modify/{commentId}")
+//    public String modifyComment(@Validated CommentDto commentDto,
+//                                BindingResult bindingResult,
+//                                @PathVariable("commentId") Long commentId,
+//                                Principal principal) {
+//
+//        if (bindingResult.hasErrors()) {
+//            return "comment_form";
+//        }
+//
+//        CommentDto existingComment = commentService.findCommentByCommendId(commentId);
+//        if (!existingComment.getAuthor().getUsername().equals(principal.getName())) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+//        }
+//
+//        commentService.modifyComment(commentId, commentDto);
+//
+//        return String.format("redirect:/article/%s#comment_%s",
+//                existingComment.getArticle().getId(), existingComment.getId());
+//    }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{commentId}")

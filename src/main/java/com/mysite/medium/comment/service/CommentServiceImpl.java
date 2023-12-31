@@ -73,9 +73,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional
-    public void modifyComment(final Long commentId, final CommentDto commentDto) {
+    public void modifyComment(final Long commentId, final CommentDto commentDto, final Principal principal) {
         final Comment comment = commentRepository.findById(commentId)
                         .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        comment.checkCommentAuthor(principal);
 
         comment.modifyComment(commentDto);
     }
