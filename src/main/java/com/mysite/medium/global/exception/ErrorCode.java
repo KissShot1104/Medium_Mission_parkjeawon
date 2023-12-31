@@ -12,6 +12,7 @@ public enum ErrorCode {
     UNAUTHORIZED_USER(400, "AU_002", "권한이 없는 사용자입니다."),
     DUPLICATED_LOGIN_ID(400, "AU_003", "이미 존재하는 ID입니다."),
     DUPLICATED_EMAIL(400, "AU_004", "이미 존재하는 E-mail입니다."),
+    INVALID_PASSWORD_MATCH(400, "AU_005", "두 패스워드가 일치하지 않습니다."),
     INTERNAL_SERVER_ERROR(500, "C_004", "서버에 문제가 생겼습니다.");
 
     private final String code;
