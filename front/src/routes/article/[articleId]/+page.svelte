@@ -42,6 +42,11 @@
 		return date.toLocaleDateString('ko-KR', options);
 	}
 
+	function toggleVoteArticle() {
+		let res = axios.post(`http://localhost:8080/article/vote/${articleId}`,null,
+		{ withCredentials: true });
+	}
+
 	function loadArticle(commentPage) {
 		return new Promise(async (resolve, reject) => {
 			try {
@@ -118,6 +123,8 @@
 				console.log(res);
 			} catch (error) {
 				reject(error);
+			} finally {
+				console.log("long done");
 			}
 		});
 	}
@@ -160,6 +167,13 @@
 	</div>
 	<div>
 		<p>게시글 추천 수 : {article.countVote}</p>
+		<button
+			class="btn btn-neutral"
+			on:click={() => {
+				toggleVoteArticle();
+				window.location.href=`http://localhost:5173/article/${articleId}`;
+			}}>추천!</button
+		>
 	</div>
 
 	<div>
@@ -175,7 +189,6 @@
 			on:click={() => {
 				localStorage.setItem('subject', article.subject);
 				localStorage.setItem('content', article.content);
-				location.href = `${articleId}/modify`;
 			}}>수정</a
 		>
 		<button
