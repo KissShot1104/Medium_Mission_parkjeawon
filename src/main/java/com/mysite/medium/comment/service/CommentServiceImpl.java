@@ -83,10 +83,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional
-    public void deleteComment(final Long commentId) {
+    public void deleteComment(final Long commentId, final Principal principal) {
 
         final Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        comment.checkCommentAuthor(principal);
 
         commentRepository.delete(comment);
     }

@@ -55,21 +55,21 @@ public class CommentController {
 //                articleId, commentId);
 //    }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/modify/{commentId}")
-    public String modifyComment(CommentDto commentDto,
-                                @PathVariable("commentId") Long commentId,
-                                Principal principal) {
-
-        CommentDto existingComment = commentService.findCommentByCommendId(commentId);
-        if (!existingComment.getAuthor().getUsername().equals(principal.getName())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
-        }
-
-        commentDto.setContent(existingComment.getContent());
-
-        return "comment_form";
-    }
+//    @PreAuthorize("isAuthenticated()")
+//    @GetMapping("/modify/{commentId}")
+//    public String modifyComment(CommentDto commentDto,
+//                                @PathVariable("commentId") Long commentId,
+//                                Principal principal) {
+//
+//        CommentDto existingComment = commentService.findCommentByCommendId(commentId);
+//        if (!existingComment.getAuthor().getUsername().equals(principal.getName())) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
+//        }
+//
+//        commentDto.setContent(existingComment.getContent());
+//
+//        return "comment_form";
+//    }
 
 //    @PreAuthorize("isAuthenticated()")
 //    @PostMapping("/modify/{commentId}")
@@ -93,18 +93,18 @@ public class CommentController {
 //                existingComment.getArticle().getId(), existingComment.getId());
 //    }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/delete/{commentId}")
-    public String deleteComment(Principal principal,
-                                @PathVariable("commentId") Long commentId) {
-        CommentDto commentDto = commentService.findCommentByCommendId(commentId);
-        if (!commentDto.getAuthor().getUsername().equals(principal.getName())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
-        }
-        commentVoteService.deleteCommentVoteAllByCommentId(commentId);
-        commentService.deleteComment(commentId);
-
-        return String.format("redirect:/article/%s", commentDto.getArticle().getId());
-    }
+//    @PreAuthorize("isAuthenticated()")
+//    @GetMapping("/delete/{commentId}")
+//    public String deleteComment(Principal principal,
+//                                @PathVariable("commentId") Long commentId) {
+//        CommentDto commentDto = commentService.findCommentByCommendId(commentId);
+//        if (!commentDto.getAuthor().getUsername().equals(principal.getName())) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
+//        }
+//        commentVoteService.deleteCommentVoteAllByCommentId(commentId);
+//        commentService.deleteComment(commentId);
+//
+//        return String.format("redirect:/article/%s", commentDto.getArticle().getId());
+//    }
 
 }

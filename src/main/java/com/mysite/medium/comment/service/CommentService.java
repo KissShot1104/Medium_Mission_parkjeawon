@@ -15,7 +15,7 @@ public interface CommentService {
 
     void modifyComment(final Long commentId, final CommentDto commentDto, final Principal principal);
 
-    void deleteComment(final Long commentId);
+    void deleteComment(final Long commentId, final Principal principal);
 
     void deleteAllByArticleId(final Long articleId);
 
