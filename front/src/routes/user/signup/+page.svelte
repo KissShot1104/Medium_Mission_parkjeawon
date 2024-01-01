@@ -5,6 +5,7 @@
 	let password1 = "";
 	let password2 = "";
 	let email = "";
+	let isPaid = false;
 
 	function createUser() {
 
@@ -14,9 +15,11 @@
 			username: username,
 			password1: password1,
 			password2: password2,
-			email: email
+			email: email,
+			isPaid: isPaid
 		})
 
+		console.log(userData);
 		formData.append("userCreateDto", new Blob([userData], {type: "application/json"}));
 
 		axios.post("http://localhost:8080/user/signup",formData, {
@@ -25,6 +28,7 @@
 			},
 			withCredentials: true
 		});
+		window.location.href="http://localhost:5173/article";
 	}
 </script>
 
@@ -42,6 +46,16 @@
 
 <div>
 	<input type="text" bind:value={email} placeholder="Email을 입력해주세요" class="input input-bordered input-primary w-full max-w-xs" />
+</div>
+
+<div>
+	<input type="radio" name="radio-2" class="radio radio-primary" on:click={() => {
+		isPaid = false
+		console.log(isPaid)
+		}} checked />일반 회원
+	<input type="radio" name="radio-2" class="radio radio-primary" on:click={() => {
+		isPaid = true
+		console.log(isPaid)}}/>멤버쉽 회원
 </div>
 
 <div>

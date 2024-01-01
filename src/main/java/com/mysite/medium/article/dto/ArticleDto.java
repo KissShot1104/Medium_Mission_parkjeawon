@@ -33,6 +33,8 @@ public class ArticleDto {
 
     private Long commentCount;
 
+    private Boolean isPaid;
+
     @QueryProjection
     public ArticleDto(Long id, String subject, SiteUserDto author, LocalDateTime createDate, Long commentCount) {
         this.id = id;
@@ -49,6 +51,7 @@ public class ArticleDto {
         this.content = content;
         this.author = author;
         this.createDate = createDate;
+        this.commentCount = commentCount;
     }
 
     @QueryProjection

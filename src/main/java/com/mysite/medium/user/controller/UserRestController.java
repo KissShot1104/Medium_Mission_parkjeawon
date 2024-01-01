@@ -34,7 +34,7 @@ public class UserRestController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/find")
+    @GetMapping("/find")
     public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
 
         HttpSession session  = request.getSession(false);

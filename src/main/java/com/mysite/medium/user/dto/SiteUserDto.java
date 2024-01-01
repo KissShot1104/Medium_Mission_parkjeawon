@@ -20,8 +20,11 @@ public class SiteUserDto {
 
     private String email;
 
+    private Boolean isPaid;
+
     @QueryProjection
-    public SiteUserDto(String username) {
+    public SiteUserDto(String username, Boolean isPaid) {
         this.username = username;
+        this.isPaid = isPaid;
     }
 }

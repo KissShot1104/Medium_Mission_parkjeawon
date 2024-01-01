@@ -1,25 +1,23 @@
 package com.mysite.medium.article.repository;
 
 
+import static com.mysite.medium.article.entity.QArticle.article;
+import static com.mysite.medium.comment.entity.QComment.comment;
+
 import com.mysite.medium.article.dto.ArticleDto;
 import com.mysite.medium.article.dto.QArticleDto;
-
 import com.mysite.medium.user.dto.QSiteUserDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-
-import static com.mysite.medium.article.entity.QArticle.article;
-import static com.mysite.medium.comment.entity.QComment.comment;
 
 
 public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
@@ -44,7 +42,9 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                         article.id,
                         article.subject,
                         article.content,
-                        new QSiteUserDto(article.author.username),
+                        new QSiteUserDto(
+                                article.author.username,
+                                article.author.isPaid),
                         article.createDate,
                         comment.count()
                 ))
@@ -87,7 +87,9 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .select(new QArticleDto(
                         article.id,
                         article.subject,
-                        new QSiteUserDto(article.author.username),
+                        new QSiteUserDto(
+                                article.author.username,
+                                article.author.isPaid),
                         article.createDate,
                         comment.count()
                 ))
@@ -114,13 +116,13 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     }
 
 
-
     public BooleanExpression articleTitleContains(String articleTitleCond) {
         if (articleTitleCond == null || articleTitleCond.isEmpty()) {
             return Expressions.asBoolean(true).isTrue();
         }
         return article.subject.contains(articleTitleCond);
     }
+
     public BooleanExpression articleContentContains(String articleContentCond) {
         if (articleContentCond == null || articleContentCond.isEmpty()) {
             return Expressions.asBoolean(true).isTrue();

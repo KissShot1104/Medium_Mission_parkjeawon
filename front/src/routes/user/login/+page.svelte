@@ -15,11 +15,8 @@
 					`http://localhost:8080/api/login`,
 					{ username: username, password: password }
 				);
-				
-				$user.set(res.data);
-				console.log($user.username);
-				setContext("user", $user);
 				resolve(res);
+				window.location.href="http://localhost:5173/article";
 			} catch (error) {
 				reject(error);
 			} finally {

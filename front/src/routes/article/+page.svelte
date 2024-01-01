@@ -11,7 +11,7 @@
 		sliceSize: 10
 	});
 
-	let promise
+	let promise;
 	let container = $state();
 	let isPost = $state(false);
 	let inputTitle = $state('');
@@ -83,10 +83,7 @@
 	}
 
 	function logout() {
-		axios.post(
-			`http://localhost:8080/api/logout`,null,
-			{ withCredentials: true }
-		)
+		axios.post(`http://localhost:8080/api/logout`, null, { withCredentials: true });
 	}
 	onMount(() => {
 		promise = loadArticleList(articleList.currentPage);
@@ -107,7 +104,7 @@
 				<button
 					class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
 					on:click={() => {
-						location.href="article/write";	
+						location.href = 'article/write';
 					}}
 				>
 					글쓰기
@@ -142,7 +139,26 @@
 								{article.content}
 							</p>
 						</a>
+
+						{#if article.author && article.author.isPaid}
+							<div class="gap-2">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									class="inline-block w-4 h-4 stroke-current"
+									><path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M6 18L18 6M6 6l12 12"
+									></path></svg
+								>
+								이 글은 유료멤버십전용 입니다.
+							</div>
+						{/if}
 					</div>
+
 					<div class="p-6">
 						<div class="flex justify-between items-center">
 							<div

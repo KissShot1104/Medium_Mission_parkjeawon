@@ -19,7 +19,8 @@
 		modifyDate: '',
 		countVote: 0,
 		countComment: 0,
-		content: ''
+		content: '',
+		isPaid: false
 	});
 
 	let comments = $state([{}]);
@@ -61,6 +62,7 @@
 				console.log(res);
 				article.subject = res.data.articleDto.subject;
 				article.author = res.data.articleDto.author.username;
+				article.isPaid = res.data.articleDto.author.isPaid;
 				article.createDate = formatDateTime(res.data.articleDto.createDate);
 				article.modifyDate = formatDateTime(res.data.articleDto.modifyDate);
 				article.countVote = res.data.articleVoteDtos.length;
@@ -250,7 +252,9 @@
 			<p class="ml-2 font-sans">{article.countComment}</p>
 		</div>
 		<div class="divider divider-Neutral mt-1" />
-
+		{#if article.isPaid}
+			<div class="badge badge-secondary badge-outline">이 글은 유료멤버십전용 입니다.</div>
+		{/if}
 		<div class="mt-8">
 			<p class="mt-4">
 				{article.content}

@@ -28,4 +28,6 @@ public class SiteUser {
 
     @Column(unique = true)
     private String email;
+
+    private Boolean isPaid;
 }

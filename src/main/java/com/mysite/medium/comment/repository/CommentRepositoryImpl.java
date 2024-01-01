@@ -33,7 +33,8 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                         comment.createDate,
                         comment.modifyDate,
                         new QSiteUserDto(
-                                comment.author.username
+                                comment.author.username,
+                                comment.author.isPaid
                         )
                 ))
                 .from(comment)

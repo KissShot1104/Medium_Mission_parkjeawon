@@ -30,6 +30,9 @@ public class UserCreateDto {
     @Email
     private String email;
 
+//    @NotBlank(message = "반드시 정해야 합니다.")
+    private Boolean isPaid;
+
     public void checkEqualsPassword() {
         if (!password1.equals(password2)) {
             throw new AuthException(ErrorCode.INVALID_PASSWORD_MATCH);
