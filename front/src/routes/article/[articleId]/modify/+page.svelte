@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import '../../../../app.css';
 	import axios from 'axios';
 	import { page } from '$app/stores';
@@ -35,7 +36,7 @@
 		});
 	}
 
-	$effect(() => {
+	onMount(() => {
 		subject = localStorage.getItem('subject');
 		content = localStorage.getItem('content');
 		articleId = $page.params["articleId"];

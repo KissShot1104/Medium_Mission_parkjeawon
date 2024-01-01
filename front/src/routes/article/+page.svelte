@@ -11,7 +11,7 @@
 		sliceSize: 10
 	});
 
-	let promise;
+	let promise
 	let container = $state();
 	let isPost = $state(false);
 	let inputTitle = $state('');

@@ -46,13 +46,10 @@ public class UserServiceImpl implements UserService {
     }
 
     public SiteUserDto getUser(final String username) {
-        final Optional<SiteUser> siteUser = this.userRepository.findByUsername(username);
+        final SiteUser siteUser = this.userRepository.findByUsername(username)
+                .orElseThrow(() -> new AuthException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (siteUser.isEmpty()) {
-            throw new DataNotFoundException("siteuser not found");
-        }
-
-        final SiteUserDto siteUserDto = siteUserDtoMapper.siteUserToSiteUserDto(siteUser.get());
+        final SiteUserDto siteUserDto = siteUserDtoMapper.siteUserToSiteUserDto(siteUser);
 
         return siteUserDto;
     }

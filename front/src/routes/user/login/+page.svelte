@@ -1,10 +1,13 @@
 <script>
 	import axios from "axios";
+	import { user } from "../../../stores/userStore";
+	import { setContext } from "svelte";
 
 	let username = '';
 	let password = '';
-
-
+	let promise = Promise.resolve();
+	
+	
 	function login() {
 		return new Promise(async (resolve, reject) => {
 			try {
@@ -12,7 +15,11 @@
 					`http://localhost:8080/api/login`,
 					{ username: username, password: password }
 				);
-				console.log(res);
+				
+				$user.set(res.data);
+				console.log($user.username);
+				setContext("user", $user);
+				resolve(res);
 			} catch (error) {
 				reject(error);
 			} finally {
@@ -40,4 +47,13 @@
 	/>
 </div>
 
-<button on:click={login}>로그인</button>
+<button on:click={() => {
+	promise = login();
+}}>로그인</button>
+
+{#await promise}
+<p>login....</p>
+{:then userData}
+
+{:catch error}
+{/await}
