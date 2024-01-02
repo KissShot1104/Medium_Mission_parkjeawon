@@ -23,7 +23,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
 @Builder
 public class Article extends BaseEntity {
     @Id

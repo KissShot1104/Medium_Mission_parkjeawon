@@ -24,7 +24,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
 @Builder
 @Entity
 public class Comment extends BaseEntity {

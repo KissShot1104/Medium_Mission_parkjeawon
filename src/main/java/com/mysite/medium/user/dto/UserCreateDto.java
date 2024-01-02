@@ -14,7 +14,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-@Setter
 public class UserCreateDto {
     @Size(min = 3, max = 25)
     @NotBlank(message = "사용자ID는 필수항목입니다.")

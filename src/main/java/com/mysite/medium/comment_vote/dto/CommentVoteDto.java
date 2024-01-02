@@ -11,7 +11,6 @@ import lombok.Setter;
 
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentVoteDto {

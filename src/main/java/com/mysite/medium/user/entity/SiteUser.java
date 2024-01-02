@@ -9,10 +9,9 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 @Getter
-@Setter
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
 @Builder
 public class SiteUser {
 
