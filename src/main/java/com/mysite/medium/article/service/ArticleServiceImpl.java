@@ -32,25 +32,27 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
     private final SiteUserDtoMapper siteUserDtoMapper;
 
-    public Page<ArticleDto> getArticleAll(final int page, final String kw) {
-        List<Sort.Order> sorts = new ArrayList<>();
-        sorts.add(Sort.Order.desc("createDate"));
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.articleRepository.findAllByKeyword(kw, pageable);
+    public Page<ArticleDto> getArticleAll(final String sortCode, final String kwType, final String kw, final int page) {
+
+        Pageable pageable = PageRequest.of(page, 10);
+        return this.articleRepository.findAllByKeyword(sortCode, kwType, kw, page, pageable);
     }
 
     public Slice<ArticleDto> getArticleSliceAll(final int page, final String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.articleRepository.findAllByKeyword(kw, pageable);
+        return this.articleRepository.findAllByKeywordSlice(kw, pageable);
     }
 
+    @Transactional
     public ArticleDto findArticleByArticleId(final Long id) {
         final Article article = this.articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
+        article.incrementViewCount();//
         final ArticleDto articleDto = articleMapper.articleToArticleDto(article);
+
 
         return articleDto;
     }
@@ -66,6 +68,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .subject(articleDto.getSubject())
                 .content(articleDto.getContent())
                 .author(siteUser)
+                .viewCount(0L)
                 .build();
 
         final Article savedArticle = articleRepository.save(article);

@@ -7,7 +7,8 @@ import org.springframework.data.domain.Slice;
 
 public interface ArticleService {
 
-    Page<ArticleDto> getArticleAll(final int page, final String kw);
+//    Page<ArticleDto> getArticleAll(final int page, final String kw);
+Page<ArticleDto> getArticleAll(final String sortCode, final String kwType, final String kw, final int page);
 
     Slice<ArticleDto> getArticleSliceAll(final int page, final String kw);
     ArticleDto findArticleByArticleId(final Long id);

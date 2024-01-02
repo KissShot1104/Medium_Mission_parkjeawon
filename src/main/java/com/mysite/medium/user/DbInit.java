@@ -42,6 +42,7 @@ public class DbInit {
                     .username(i + "")
                     .password(passwordEncoder.encode(i + ""))
                     .email(i + "@" + i)
+                    .isPaid(i % 2 == 0)
                     .build();
             siteUsers.add(siteUser);
             userRepository.save(siteUser);
@@ -52,9 +53,10 @@ public class DbInit {
         List<Article> articles = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             Article article = Article.builder()
-                    .subject(i + "" + i + i)
-                    .content(i + "" + i + i)
+                    .subject("제목:" + i + "" + i + i)
+                    .content("내용:" + i + "" + i + i)
                     .author(siteUsers.get(i % 10))
+                    .viewCount((long) i)
                     .build();
 
             articles.add(article);

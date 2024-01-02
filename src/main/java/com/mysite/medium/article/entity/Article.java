@@ -41,6 +41,8 @@ public class Article extends BaseEntity {
     @JoinColumn(name="site_user_id")
     private SiteUser author;
 
+    private Long viewCount;
+
     public void modifyArticle(ArticleDto articleDto) {
         this.subject = articleDto.getSubject();
         this.content = articleDto.getContent();
@@ -50,6 +52,13 @@ public class Article extends BaseEntity {
         if (!this.author.getUsername().equals(principal.getName())) {
             throw new AuthException(ErrorCode.UNAUTHORIZED_USER);
         }
+    }
+
+    public void incrementViewCount() {
+        if (this.viewCount == null) {
+            viewCount = 0L;
+        }
+        viewCount++;
     }
 
 }

@@ -7,7 +7,10 @@ import org.springframework.data.domain.Slice;
 
 public interface ArticleRepositoryCustom {
 
-    Page<ArticleDto> findAllByKeyword(String kw, Pageable pageable);
+//    Page<ArticleDto> findAllByKeyword(String kw, Pageable pageable);
+
+    Page<ArticleDto> findAllByKeyword(final String sortCode, final String kwType, final String kw, final int page, Pageable pageable);
+
     Slice<ArticleDto> findAllByKeywordSlice(String kw, Pageable pageable);
 
 }

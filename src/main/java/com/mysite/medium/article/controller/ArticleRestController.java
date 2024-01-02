@@ -39,11 +39,21 @@ public class ArticleRestController {
     private final ArticleVoteService articleVoteService;
     private final CommentVoteService commentVoteService;
 
-    @GetMapping
-    public ResponseEntity<Page<ArticleDto>> listArticles(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                         @RequestParam(value = "kw", defaultValue = "") String kw) {
+//    @GetMapping
+//    public ResponseEntity<Page<ArticleDto>> listArticles(@RequestParam(value = "page", defaultValue = "0") int page,
+//                                                         @RequestParam(value = "kw", defaultValue = "") String kw) {
+//
+//        Page<ArticleDto> articleAll = this.articleService.getArticleAll(page, kw);
+//        return ResponseEntity.ok(articleAll);
+//    }
 
-        Page<ArticleDto> articleAll = this.articleService.getArticleAll(page, kw);
+    @GetMapping
+    public ResponseEntity<Page<ArticleDto>> listArticles(@RequestParam(value = "sortCode", defaultValue = "") String sortCode,
+                                                         @RequestParam(value = "kwType", defaultValue = "") String kwType,
+                                                         @RequestParam(value = "kw", defaultValue = "") String kw,
+                                                         @RequestParam(value = "page", defaultValue = "0") int page) {
+
+        Page<ArticleDto> articleAll = this.articleService.getArticleAll(sortCode, kwType, kw, page);
         return ResponseEntity.ok(articleAll);
     }
 
