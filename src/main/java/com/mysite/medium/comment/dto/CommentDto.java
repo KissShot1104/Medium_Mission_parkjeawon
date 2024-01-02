@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
 @Builder
 public class CommentDto {
 

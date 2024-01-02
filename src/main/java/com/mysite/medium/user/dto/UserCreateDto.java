@@ -13,7 +13,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
 public class UserCreateDto {
     @Size(min = 3, max = 25)
     @NotBlank(message = "사용자ID는 필수항목입니다.")
