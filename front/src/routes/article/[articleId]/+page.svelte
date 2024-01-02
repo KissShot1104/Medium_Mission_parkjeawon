@@ -20,7 +20,8 @@
 		countVote: 0,
 		countComment: 0,
 		content: '',
-		isPaid: false
+		isPaid: false,
+		viewCount: 0
 	});
 
 	let comments = $state([{}]);
@@ -68,6 +69,7 @@
 				article.countVote = res.data.articleVoteDtos.length;
 				article.countComment = res.data.pagingComment.totalElements;
 				article.content = res.data.articleDto.content;
+				article.viewCount = res.data.articleDto.viewCount;
 
 				comments = res.data.pagingComment.content;
 				commentVoteDtos = res.data.commentVoteDtos;
@@ -129,7 +131,7 @@
 			try {
 				let res = await axios.post(
 					`http://localhost:8080/api/login`,
-					{ username: '3', password: '3' },
+					{ username: '4', password: '4' },
 					{ withCredentials: true }
 				);
 				// console.log(res);
@@ -250,6 +252,8 @@
 
 			<Icon class="ml-4" icon="ant-design:comment-outlined" color="white" width="20" />
 			<p class="ml-2 font-sans">{article.countComment}</p>
+			<Icon icon="ep:view" class="ml-4" color="white" /><p class="ml-2 font-sans">{article.viewCount}</p>
+			
 		</div>
 		<div class="divider divider-Neutral mt-1" />
 		{#if article.isPaid}

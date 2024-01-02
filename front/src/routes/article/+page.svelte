@@ -2,6 +2,8 @@
 	import '../../app.css';
 	import axios from 'axios';
 	import { onMount } from 'svelte';
+	import Icon from '@iconify/svelte';
+	import { page } from '$app/stores';
 
 	let articleList = $state({
 		articles: [{}],
@@ -11,26 +13,35 @@
 		sliceSize: 10
 	});
 
+	let sortCode = $state('');
+	let kw = $state('');
+	let kwType = $state('');
+
 	let promise;
 	let container = $state();
 	let isPost = $state(false);
 	let inputTitle = $state('');
 	let inputContent = $state('');
 
-	function loadArticleList(page) {
+	function loadArticleList(pageNumber) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				const res = await axios.get(`http://localhost:8080/article?page=${page}`, {
-					withCredentials: true
-				});
-				console.log(res);
+				sortCode = $page.url.searchParams.get('sortCode') || '';
+				kw = $page.url.searchParams.get('kw') || '';
+				kwType = $page.url.searchParams.get('kwType') || '';
+				const res = await axios.get(
+					`http://localhost:8080/article?sortCode=${sortCode}&kw=${kw}&kwType=${kwType}&page=${pageNumber}`,
+					{
+						withCredentials: true
+					}
+				);
+
 				articleList.articles = articleList.articles.concat(res.data.content);
 				articleList.totalPages = res.data.totalPages;
 				articleList.currentPage = res.data.number;
 				articleList.totalElements = res.data.totalElements;
 				console.log(articleList);
 				resolve(articleList.articles);
-				console.log(articleList.articles[0].title);
 				articleList.currentPage += 1;
 			} catch (err) {
 				console.log('err');
@@ -129,47 +140,62 @@
 				</button> -->
 			</div>
 			{#each articleList.articles as article}
-				<div class="rounded-lg border bg-card text-card-foreground shadow-sm mb-6" data-v0-t="card">
-					<div class="flex flex-col space-y-1.5 p-6">
-						<a href="http://localhost:5173/article/{article.id}">
-							<h3 class="text-2xl font-semibold leading-none tracking-tight">
-								{article.subject}
-							</h3>
-							<p class="text-sm text-muted-foreground">
-								{article.content}
-							</p>
-						</a>
+				{#if article.author}
+					<div
+						class="rounded-lg border bg-card text-card-foreground shadow-sm mb-6"
+						data-v0-t="card"
+					>
+						<div class="flex flex-col space-y-1.5 p-6">
+							<a href="http://localhost:5173/article/{article.id}">
+								<h3 class="text-2xl font-semibold leading-none tracking-tight">
+									{article.subject}
+								</h3>
+								<p class="text-sm text-muted-foreground">
+									{article.content}
+								</p>
+							</a>
 
-						{#if article.author && article.author.isPaid}
-							<div class="gap-2">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									class="inline-block w-4 h-4 stroke-current"
-									><path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M6 18L18 6M6 6l12 12"
-									></path></svg
-								>
-								이 글은 유료멤버십전용 입니다.
-							</div>
-						{/if}
-					</div>
+							{#if article.author && article.author.isPaid}
+								<div class="gap-2">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										class="inline-block w-4 h-4 stroke-current"
+										><path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M6 18L18 6M6 6l12 12"
+										></path></svg
+									>
+									이 글은 유료멤버십전용 입니다.
+								</div>
+							{/if}
+						</div>
 
-					<div class="p-6">
-						<div class="flex justify-between items-center">
-							<div
-								class="inline-flex items-center rounded-full border px-2.5 py-0.5 w-fit text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-							>
-								카테고리
+						<div class="p-6">
+							<div class="flex justify-between items-center">
+								<div
+									class="inline-flex items-center rounded-full border px-2.5 py-0.5 w-fit text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+								>글쓴이 : {article.author.username}</div>
+								<Icon
+									class="ml-4 clickable-icon"
+									icon="ic:outline-recommend"
+									color="white"
+									width="20"
+								/>
+								<p class="ml-2 font-sans">{article.voteCount}</p>
+
+								<Icon class="ml-4" icon="ant-design:comment-outlined" color="white" width="20" />
+								<p class="ml-2 font-sans">{article.commentCount}</p>
+								<Icon icon="ep:view" class="ml-4" color="white" />
+								<p class="ml-2 font-sans">{article.viewCount}</p>
+								<span>{formatDateTime(article.createDate)}</span>
 							</div>
-							<span>{formatDateTime(article.createDate)}</span>
 						</div>
 					</div>
-				</div>
+				{/if}
 			{/each}
 		</div>
 		<div class="w-80 p-8">
