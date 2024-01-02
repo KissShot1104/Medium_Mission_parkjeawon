@@ -200,42 +200,7 @@
 		</div>
 		<div class="w-80 p-8">
 			<div class="mb-6">
-				<h2 class="text-lg font-semibold mb-3">Staff Picks</h2>
-				<ul>
-					<li class="mb-2">
-						<a href="#">32 of our favorite Medium stories of 2023</a>
-					</li>
-					<li class="mb-2">
-						<a href="#">End-of-Year Reflection Questions for the Procrastinating Perfectionist</a>
-					</li>
-					<li class="mb-2">
-						<a href="#">NY Times Missed These 12 Trailblazers: Meet the Women Transforming AI</a>
-					</li>
-				</ul>
-				<button
-					class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-				>
-					See the full list
-				</button>
-			</div>
-			<div class="sticky top-8 bg-white p-4 shadow rounded-lg">
-				<h3 class="text-lg font-semibold mb-3">Writing on Medium</h3>
-				<ul>
-					<li class="mb-2">
-						<a href="#">New writer FAQ</a>
-					</li>
-					<li class="mb-2">
-						<a href="#">Expert writing advice</a>
-					</li>
-					<li class="mb-2">
-						<a href="#">Grow your readership</a>
-					</li>
-				</ul>
-				<button
-					class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full mt-4"
-				>
-					Start writing
-				</button>
+				
 			</div>
 		</div>
 	</div>
