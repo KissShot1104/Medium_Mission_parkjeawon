@@ -1,4 +1,4 @@
-package com.mysite.medium;
+package com.mysite.medium.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

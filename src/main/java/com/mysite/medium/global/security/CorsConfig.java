@@ -1,4 +1,4 @@
-package com.mysite.medium;
+package com.mysite.medium.global.security;
 
 import java.util.List;
 import org.springframework.context.annotation.Bean;

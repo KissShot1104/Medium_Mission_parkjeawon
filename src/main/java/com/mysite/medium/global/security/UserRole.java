@@ -1,4 +1,4 @@
-package com.mysite.medium.user;
+package com.mysite.medium.global.security;
 
 import lombok.Getter;
 

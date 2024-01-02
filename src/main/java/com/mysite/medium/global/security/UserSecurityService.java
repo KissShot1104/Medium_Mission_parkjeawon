@@ -1,5 +1,6 @@
-package com.mysite.medium.user;
+package com.mysite.medium.global.security;
 
+import com.mysite.medium.global.security.UserRole;
 import com.mysite.medium.user.entity.SiteUser;
 import com.mysite.medium.user.repository.UserRepository;
 import java.util.ArrayList;

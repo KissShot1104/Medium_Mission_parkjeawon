@@ -1,9 +1,9 @@
-package com.mysite.medium.user;
+package com.mysite.medium.global.security;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-import com.mysite.medium.BootAuthenticationSuccessHandler;
-import com.mysite.medium.LoginAuthenticationFilter;
+import com.mysite.medium.global.security.BootAuthenticationSuccessHandler;
+import com.mysite.medium.global.security.LoginAuthenticationFilter;
 import java.nio.charset.StandardCharsets;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
