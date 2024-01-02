@@ -4,6 +4,7 @@ import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.user.entity.SiteUser;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,12 +29,12 @@ public class ArticleVote {
     @Column(name="article_vote_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch= FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name="article_id")
     private Article article;
 
-    @ManyToOne
+    @ManyToOne(fetch= FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name="site_user_id")
     private SiteUser user;

@@ -3,6 +3,7 @@ package com.mysite.medium.article.entity;
 import com.mysite.medium.article.dto.ArticleDto;
 import com.mysite.medium.global.exception.AuthException;
 import com.mysite.medium.global.exception.ErrorCode;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 
 import com.mysite.medium.global.BaseEntity;
@@ -36,7 +37,7 @@ public class Article extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch= FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name="site_user_id")
     private SiteUser author;
