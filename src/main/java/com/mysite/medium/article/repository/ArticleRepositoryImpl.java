@@ -198,21 +198,43 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     }
 
     public BooleanExpression buildSearchPredicate(final String kwType, final String kw) {
-        BooleanExpression predicate =  Expressions.asBoolean(true).isTrue();
+        BooleanExpression predicate;
         if (kwType != null && !kwType.isEmpty()) {
-            predicate = Expressions.asBoolean(false).isTrue();
-            List<String> kwTypes = Arrays.stream(kwType.split(",")).toList();
-
-            if (kwTypes.contains("title")) {
-                predicate = predicate.or(articleTitleContains(kw));
-            }
-            if (kwTypes.contains("body")) {
-                predicate = predicate.or(articleContentContains(kw));
-            }
-            if (kwTypes.contains("author")) {
-                predicate = predicate.or(articleAuthorContains(kw));
-            }
+            predicate = hasKwType(kwType, kw);
+            return predicate;
         }
+
+        predicate = defaultSearch(kw);
+        return predicate;
+    }
+
+    public BooleanExpression hasKwType(final String kwType, final String kw) {
+
+        BooleanExpression predicate = Expressions.asBoolean(false).isTrue();
+
+        List<String> kwTypes = Arrays.stream(kwType.split(",")).toList();
+
+
+        if (kwTypes.contains("title")) {
+            predicate = predicate.or(articleTitleContains(kw));
+        }
+        if (kwTypes.contains("body")) {
+            predicate = predicate.or(articleContentContains(kw));
+        }
+        if (kwTypes.contains("author")) {
+            predicate = predicate.or(articleAuthorContains(kw));
+        }
+
+        return predicate;
+    }
+
+    public BooleanExpression defaultSearch(final String kw) {
+        BooleanExpression predicate;
+
+        predicate = articleTitleContains(kw)
+                .or(articleContentContains(kw))
+                .or(articleAuthorContains(kw));
+
         return predicate;
     }
 
