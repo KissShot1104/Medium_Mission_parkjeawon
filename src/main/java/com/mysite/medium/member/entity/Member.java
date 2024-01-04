@@ -1,4 +1,4 @@
-package com.mysite.medium.user.entity;
+package com.mysite.medium.member.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,10 +1,8 @@
-package com.mysite.medium.user.controller;
+package com.mysite.medium.member.controller;
 
-import com.mysite.medium.global.exception.AuthException;
-import com.mysite.medium.global.exception.ErrorCode;
-import com.mysite.medium.user.dto.CheckLoginDto;
-import com.mysite.medium.user.dto.MemberCreateDto;
-import com.mysite.medium.user.service.MemberService;
+import com.mysite.medium.member.dto.CheckLoginDto;
+import com.mysite.medium.member.dto.MemberCreateDto;
+import com.mysite.medium.member.service.MemberService;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.mysite.medium.user.dto;
+package com.mysite.medium.member.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;

@@ -1,7 +1,7 @@
 package com.mysite.medium.global.config;
 
-import com.mysite.medium.user.entity.Member;
-import com.mysite.medium.user.repository.MemberRepository;
+import com.mysite.medium.member.entity.Member;
+import com.mysite.medium.member.repository.MemberRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

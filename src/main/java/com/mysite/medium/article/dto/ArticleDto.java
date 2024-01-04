@@ -1,6 +1,6 @@
 package com.mysite.medium.article.dto;
 
-import com.mysite.medium.user.dto.MemberDto;
+import com.mysite.medium.member.dto.MemberDto;
 import com.querydsl.core.annotations.QueryProjection;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor

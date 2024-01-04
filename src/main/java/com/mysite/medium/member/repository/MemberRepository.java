@@ -1,6 +1,6 @@
-package com.mysite.medium.user.repository;
+package com.mysite.medium.member.repository;
 
-import com.mysite.medium.user.entity.Member;
+import com.mysite.medium.member.entity.Member;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;

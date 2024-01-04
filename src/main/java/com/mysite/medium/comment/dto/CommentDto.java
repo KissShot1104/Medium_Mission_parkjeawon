@@ -1,10 +1,9 @@
 package com.mysite.medium.comment.dto;
 
 import com.mysite.medium.article.entity.Article;
-import com.mysite.medium.user.dto.MemberDto;
+import com.mysite.medium.member.dto.MemberDto;
 import com.querydsl.core.annotations.QueryProjection;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 
 import lombok.*;
 

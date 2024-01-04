@@ -1,27 +1,12 @@
 package com.mysite.medium.comment.controller;
 
-import com.mysite.medium.article.dto.ArticleDto;
 import com.mysite.medium.article.service.ArticleService;
-import com.mysite.medium.comment.dto.CommentDto;
 import com.mysite.medium.comment.service.CommentService;
-import com.mysite.medium.comment_vote.entity.CommentVote;
 import com.mysite.medium.comment_vote.service.CommentVoteService;
-import com.mysite.medium.user.dto.MemberDto;
-import com.mysite.medium.user.service.MemberService;
-import java.security.Principal;
+import com.mysite.medium.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.server.ResponseStatusException;
 
 
 @RequiredArgsConstructor

@@ -1,14 +1,13 @@
-package com.mysite.medium.user.service;
+package com.mysite.medium.member.service;
 
 import com.mysite.medium.global.exception.AuthException;
 import com.mysite.medium.global.exception.ErrorCode;
-import com.mysite.medium.user.dto.CheckLoginDto;
-import com.mysite.medium.user.dto.MemberCreateDto;
-import com.mysite.medium.user.dto.MemberDtoMapper;
-import com.mysite.medium.user.entity.Member;
-import com.mysite.medium.user.repository.MemberRepository;
+import com.mysite.medium.member.dto.CheckLoginDto;
+import com.mysite.medium.member.dto.MemberCreateDto;
+import com.mysite.medium.member.dto.MemberDtoMapper;
+import com.mysite.medium.member.entity.Member;
+import com.mysite.medium.member.repository.MemberRepository;
 import java.security.Principal;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

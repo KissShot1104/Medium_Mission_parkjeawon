@@ -8,7 +8,7 @@ import com.mysite.medium.article_vote.service.ArticleVoteService;
 import com.mysite.medium.comment.dto.CommentDto;
 import com.mysite.medium.comment.service.CommentService;
 import com.mysite.medium.comment_vote.service.CommentVoteService;
-import com.mysite.medium.user.service.MemberService;
+import com.mysite.medium.member.service.MemberService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.security.Principal;

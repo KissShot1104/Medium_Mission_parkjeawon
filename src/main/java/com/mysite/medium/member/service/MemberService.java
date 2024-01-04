@@ -1,7 +1,7 @@
-package com.mysite.medium.user.service;
+package com.mysite.medium.member.service;
 
-import com.mysite.medium.user.dto.CheckLoginDto;
-import com.mysite.medium.user.dto.MemberCreateDto;
+import com.mysite.medium.member.dto.CheckLoginDto;
+import com.mysite.medium.member.dto.MemberCreateDto;
 import java.security.Principal;
 
 public interface MemberService {

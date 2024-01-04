@@ -1,7 +1,7 @@
 package com.mysite.medium.comment_vote.service;
 
 import com.mysite.medium.comment.entity.Comment;
-import com.mysite.medium.user.entity.Member;
+import com.mysite.medium.member.entity.Member;
 import java.security.Principal;
 import java.util.Map;
 

@@ -4,7 +4,7 @@ import static com.mysite.medium.comment.entity.QComment.comment;
 
 import com.mysite.medium.comment.dto.CommentDto;
 import com.mysite.medium.comment.dto.QCommentDto;
-import com.mysite.medium.user.dto.QMemberDto;
+import com.mysite.medium.member.dto.QMemberDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

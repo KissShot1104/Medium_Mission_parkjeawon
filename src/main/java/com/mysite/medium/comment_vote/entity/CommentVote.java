@@ -2,7 +2,7 @@ package com.mysite.medium.comment_vote.entity;
 
 import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.comment.entity.Comment;
-import com.mysite.medium.user.entity.Member;
+import com.mysite.medium.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

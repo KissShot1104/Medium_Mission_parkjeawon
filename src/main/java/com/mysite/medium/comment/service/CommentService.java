@@ -1,7 +1,6 @@
 package com.mysite.medium.comment.service;
 
 import com.mysite.medium.comment.dto.CommentDto;
-import com.mysite.medium.user.dto.MemberDto;
 import java.security.Principal;
 import org.springframework.data.domain.Page;
 

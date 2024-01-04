@@ -1,4 +1,4 @@
-package com.mysite.medium.user.dto;
+package com.mysite.medium.member.dto;
 
 import com.mysite.medium.global.exception.AuthException;
 import com.mysite.medium.global.exception.ErrorCode;
