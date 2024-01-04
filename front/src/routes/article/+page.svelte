@@ -77,10 +77,10 @@
 		return new Promise(async (resolve, reject) => {
 			try {
 				let res = await axios.post(
-					`http://localhost:8080/api/login`,
+					`http://localhost:8080/user/login`,
 					{
-						username: '3',
-						password: '3'
+						username: '4',
+						password: '4'
 					},
 					{
 						withCredentials: true
@@ -94,12 +94,13 @@
 	}
 
 	function logout() {
-		axios.post(`http://localhost:8080/api/logout`, null, { withCredentials: true });
+		axios.delete(`http://localhost:8080/user/logout`, { withCredentials: true });
 	}
 	onMount(() => {
 		promise = loadArticleList(articleList.currentPage);
 		container.addEventListener('scroll', handleScroll);
 		login();
+
 		return () => {
 			container.removeEventListener('scroll', handleScroll);
 		};

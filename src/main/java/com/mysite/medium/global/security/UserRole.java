@@ -9,9 +9,9 @@ public enum UserRole {
     USER("ROLE_USER"),
     PAID("ROLE_PAID");
 
-    UserRole(String value) {
-        this.value = value;
+    UserRole(String role) {
+        this.role = role;
     }
 
-    private String value;
+    private String role;
 }

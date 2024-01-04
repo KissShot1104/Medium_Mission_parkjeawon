@@ -34,10 +34,10 @@
 		return new Promise(async (resolve, reject) => {
 			try {
 				let res = await axios.post(
-					`http://localhost:8080/api/login`,
+					`http://localhost:8080/user/login`,
 					{
-						username: '3',
-						password: '3'
+						username: '4',
+						password: '4'
 					},
 					{
 						withCredentials: true

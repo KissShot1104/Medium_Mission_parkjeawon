@@ -130,11 +130,11 @@
 		return new Promise(async (resolve, reject) => {
 			try {
 				let res = await axios.post(
-					`http://localhost:8080/api/login`,
+					`http://localhost:8080/user/login`,
 					{ username: '4', password: '4' },
 					{ withCredentials: true }
 				);
-				// console.log(res);
+				console.log(res);
 			} catch (error) {
 				reject(error);
 			} finally {
@@ -188,7 +188,6 @@
 		modifyInputComment = '';
 		window.location.href = `http://localhost:5173/article/${articleId}`;
 	}
-
 	function deleteComment(commentId) {
 		axios.delete(`http://localhost:8080/article/comment/delete/${commentId}`, {
 			withCredentials: true
