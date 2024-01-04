@@ -1,6 +1,6 @@
 package com.mysite.medium.article.dto;
 
-import com.mysite.medium.user.dto.SiteUserDto;
+import com.mysite.medium.user.dto.MemberDto;
 import com.querydsl.core.annotations.QueryProjection;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -31,7 +31,7 @@ public class ArticleDto {
 
     private LocalDateTime modifyDate;
 
-    private SiteUserDto author;
+    private MemberDto author;
 
     private Long commentCount;
 
@@ -42,7 +42,7 @@ public class ArticleDto {
     private Long viewCount;
 
     @QueryProjection
-    public ArticleDto(Long id, String subject, SiteUserDto author, LocalDateTime createDate, Long commentCount) {
+    public ArticleDto(Long id, String subject, MemberDto author, LocalDateTime createDate, Long commentCount) {
         this.id = id;
         this.subject = subject;
         this.author = author;
@@ -54,7 +54,7 @@ public class ArticleDto {
     public ArticleDto(Long id,
                       String subject,
                       String content,
-                      SiteUserDto author,
+                      MemberDto author,
                       LocalDateTime createDate,
                       Long commentCount,
                       Long voteCount,
@@ -70,7 +70,7 @@ public class ArticleDto {
     }
 
     @QueryProjection
-    public ArticleDto(Long id, String subject, SiteUserDto author, LocalDateTime createDate) {
+    public ArticleDto(Long id, String subject, MemberDto author, LocalDateTime createDate) {
         this.id = id;
         this.subject = subject;
         this.author = author;

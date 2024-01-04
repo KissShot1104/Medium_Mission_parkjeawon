@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @Builder
-public class SiteUserDto {
+public class MemberDto {
 
 
     private Long id;
@@ -22,7 +22,7 @@ public class SiteUserDto {
     private Boolean isPaid;
 
     @QueryProjection
-    public SiteUserDto(String username, Boolean isPaid) {
+    public MemberDto(String username, Boolean isPaid) {
         this.username = username;
         this.isPaid = isPaid;
     }

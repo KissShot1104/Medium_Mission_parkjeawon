@@ -7,7 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 
 import com.mysite.medium.global.BaseEntity;
-import com.mysite.medium.user.entity.SiteUser;
+import com.mysite.medium.user.entity.Member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,8 +39,8 @@ public class Article extends BaseEntity {
 
     @ManyToOne(fetch= FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name="site_user_id")
-    private SiteUser author;
+    @JoinColumn(name="member_id")
+    private Member author;
 
     private Long viewCount;
 

@@ -8,8 +8,8 @@ import com.mysite.medium.article_vote.entity.ArticleVote;
 import com.mysite.medium.article_vote.repository.ArticleVoteRepository;
 import com.mysite.medium.global.exception.EntityNotFoundException;
 import com.mysite.medium.global.exception.ErrorCode;
-import com.mysite.medium.user.entity.SiteUser;
-import com.mysite.medium.user.repository.UserRepository;
+import com.mysite.medium.user.entity.Member;
+import com.mysite.medium.user.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class ArticleVoteServiceImpl implements ArticleVoteService {
     //어떨때 repository를 부르고 어떨 때 Service를 불러야 하는가?
     private final ArticleVoteRepository articleVoteRepository;
     private final ArticleRepository articleRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     private final ArticleVoteMapper articleVoteMapper;
 
@@ -33,7 +33,7 @@ public class ArticleVoteServiceImpl implements ArticleVoteService {
         final Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        final SiteUser user = userRepository.findByUsername(username)
+        final Member user = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         final Optional<ArticleVote> articleVote = articleVoteRepository.findByArticleIdAndUserId(articleId,
@@ -46,7 +46,7 @@ public class ArticleVoteServiceImpl implements ArticleVoteService {
         }
     }
 
-    private void createArticleVote(final Article article, final SiteUser user) {
+    private void createArticleVote(final Article article, final Member user) {
         final ArticleVote articleVote = ArticleVote.builder()
                 .article(article)
                 .user(user)

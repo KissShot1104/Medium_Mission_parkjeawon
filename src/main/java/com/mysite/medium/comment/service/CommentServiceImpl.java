@@ -1,6 +1,5 @@
 package com.mysite.medium.comment.service;
 
-import com.mysite.medium.DataNotFoundException;
 import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.article.repository.ArticleRepository;
 import com.mysite.medium.comment.dto.CommentDto;
@@ -9,14 +8,11 @@ import com.mysite.medium.comment.entity.Comment;
 import com.mysite.medium.comment.repository.CommentRepository;
 import com.mysite.medium.global.exception.EntityNotFoundException;
 import com.mysite.medium.global.exception.ErrorCode;
-import com.mysite.medium.user.dto.SiteUserDto;
-import com.mysite.medium.user.dto.SiteUserDtoMapper;
-import com.mysite.medium.user.entity.SiteUser;
-import com.mysite.medium.user.repository.UserRepository;
+import com.mysite.medium.user.entity.Member;
+import com.mysite.medium.user.repository.MemberRepository;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +29,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final ArticleRepository articleRepository;
     private final CommentMapper commentMapper;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     public Page<CommentDto> findCommentAllByArticleId(final int page, final Long id) {
         final List<Order> sorts = new ArrayList<>();
@@ -49,13 +45,13 @@ public class CommentServiceImpl implements CommentService {
         final Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        final SiteUser siteUser = userRepository.findByUsername(principal.getName())
+        final Member member = memberRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         final Comment comment = Comment.builder()
                 .content(commentDto.getContent())
                 .article(article)
-                .author(siteUser)
+                .author(member)
                 .build();
 
         commentRepository.save(comment);

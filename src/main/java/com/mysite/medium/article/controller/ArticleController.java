@@ -7,8 +7,8 @@
 //import com.mysite.medium.comment.dto.CommentDto;
 //import com.mysite.medium.comment.service.CommentService;
 //import com.mysite.medium.comment_vote.service.CommentVoteService;
-//import com.mysite.medium.user.dto.SiteUserDto;
-//import com.mysite.medium.user.service.UserService;
+//import com.mysite.medium.user.dto.MemberDto;
+//import com.mysite.medium.user.service.MemberService;
 //import jakarta.validation.Valid;
 //import java.security.Principal;
 //import java.util.List;
@@ -36,7 +36,7 @@
 //
 //    private final ArticleService articleService;
 //    private final CommentService commentService;
-//    private final UserService userService;
+//    private final MemberService userService;
 //    private final ArticleVoteService articleVoteService;
 //    private final CommentVoteService commentVoteService;
 //
@@ -83,7 +83,7 @@
 //            return "article_form";
 //        }
 //
-//        SiteUserDto siteUser = this.userService.getUser(principal.getName());
+//        MemberDto member = this.userService.getUser(principal.getName());
 //        this.articleService.createArticle(articleDto, principal);
 //
 //        return "redirect:/article/list";

@@ -8,7 +8,7 @@ import com.mysite.medium.article_vote.service.ArticleVoteService;
 import com.mysite.medium.comment.dto.CommentDto;
 import com.mysite.medium.comment.service.CommentService;
 import com.mysite.medium.comment_vote.service.CommentVoteService;
-import com.mysite.medium.user.service.UserService;
+import com.mysite.medium.user.service.MemberService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
@@ -35,7 +35,7 @@ public class ArticleRestController {
 
     private final ArticleService articleService;
     private final CommentService commentService;
-    private final UserService userService;
+    private final MemberService userService;
     private final ArticleVoteService articleVoteService;
     private final CommentVoteService commentVoteService;
 

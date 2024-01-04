@@ -1,7 +1,7 @@
 package com.mysite.medium.global.config;
 
-import com.mysite.medium.user.entity.SiteUser;
-import com.mysite.medium.user.repository.UserRepository;
+import com.mysite.medium.user.entity.Member;
+import com.mysite.medium.user.repository.MemberRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,26 +18,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserSecurityService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<SiteUser> _siteUser = this.userRepository.findByUsername(username);
-        if (_siteUser.isEmpty()) {
+        Optional<Member> _member = this.memberRepository.findByUsername(username);
+        if (_member.isEmpty()) {
             throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");
         }
-        SiteUser siteUser = _siteUser.get();
+        Member member = _member.get();
         List<GrantedAuthority> authorities = new ArrayList<>();
         if ("admin".equals(username)) {
             authorities.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
         } else {
-            if (siteUser.getIsPaid() == Boolean.TRUE) {
+            if (member.getIsPaid() == Boolean.TRUE) {
                 authorities.add(new SimpleGrantedAuthority(UserRole.PAID.getValue()));
             } else {
                 authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
             }
 
         }
-        return new User(siteUser.getUsername(), siteUser.getPassword(), authorities);
+        return new User(member.getUsername(), member.getPassword(), authorities);
     }
 }

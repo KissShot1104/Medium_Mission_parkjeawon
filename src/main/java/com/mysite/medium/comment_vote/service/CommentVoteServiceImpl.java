@@ -9,8 +9,8 @@ import com.mysite.medium.comment_vote.entity.CommentVote;
 import com.mysite.medium.comment_vote.repository.CommentVoteRepository;
 import com.mysite.medium.global.exception.EntityNotFoundException;
 import com.mysite.medium.global.exception.ErrorCode;
-import com.mysite.medium.user.entity.SiteUser;
-import com.mysite.medium.user.repository.UserRepository;
+import com.mysite.medium.user.entity.Member;
+import com.mysite.medium.user.repository.MemberRepository;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +26,7 @@ public class CommentVoteServiceImpl implements CommentVoteService {
 
     private final CommentVoteRepository commentVoteRepository;
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     private final CommentMapper commentMapper;
 
@@ -36,7 +36,7 @@ public class CommentVoteServiceImpl implements CommentVoteService {
         final Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new com.mysite.medium.global.exception.EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        final SiteUser user = userRepository.findByUsername(principal.getName())
+        final Member user = memberRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         final Optional<CommentVote> commentVote = commentVoteRepository.findByCommentIdAndUserId(commentId, user.getId());
@@ -48,7 +48,7 @@ public class CommentVoteServiceImpl implements CommentVoteService {
         }
     }
 
-    public void createCommentVote(final Comment comment, final SiteUser user) {
+    public void createCommentVote(final Comment comment, final Member user) {
         final CommentVote commentVote = CommentVote.builder()
                 .article(comment.getArticle())
                 .comment(comment)

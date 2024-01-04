@@ -1,7 +1,7 @@
 package com.mysite.medium.comment.dto;
 
 import com.mysite.medium.article.entity.Article;
-import com.mysite.medium.user.dto.SiteUserDto;
+import com.mysite.medium.user.dto.MemberDto;
 import com.querydsl.core.annotations.QueryProjection;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -25,14 +25,14 @@ public class CommentDto {
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
 
-    private SiteUserDto author;//이름을 author? siteUserForm? siteUser?
+    private MemberDto author;//이름을 author? memberForm? member?
 
     @QueryProjection
     public CommentDto(Long id,
                       String content,
                       LocalDateTime createDate,
                       LocalDateTime modifyDate,
-                      SiteUserDto author) {
+                      MemberDto author) {
 
         this.id = id;
         this.content = content;

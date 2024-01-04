@@ -6,11 +6,9 @@ import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.article.repository.ArticleRepository;
 import com.mysite.medium.global.exception.EntityNotFoundException;
 import com.mysite.medium.global.exception.ErrorCode;
-import com.mysite.medium.user.dto.SiteUserDto;
-import com.mysite.medium.user.dto.SiteUserDtoMapper;
-import com.mysite.medium.user.entity.SiteUser;
-import com.mysite.medium.user.repository.UserRepository;
-import com.mysite.medium.user.service.UserService;
+import com.mysite.medium.user.dto.MemberDtoMapper;
+import com.mysite.medium.user.entity.Member;
+import com.mysite.medium.user.repository.MemberRepository;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final ArticleMapper articleMapper;
-    private final SiteUserDtoMapper siteUserDtoMapper;
+    private final MemberDtoMapper memberDtoMapper;
 
     public Page<ArticleDto> getArticleAll(final String sortCode, final String kwType, final String kw, final int page) {
 
@@ -61,13 +59,13 @@ public class ArticleServiceImpl implements ArticleService {
     public Long createArticle(final ArticleDto articleDto, final Principal principal) {
 
 
-        final SiteUser siteUser = userRepository.findByUsername(principal.getName())
+        final Member member = memberRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         final Article article = Article.builder()//수정 바람
                 .subject(articleDto.getSubject())
                 .content(articleDto.getContent())
-                .author(siteUser)
+                .author(member)
                 .viewCount(0L)
                 .build();
 

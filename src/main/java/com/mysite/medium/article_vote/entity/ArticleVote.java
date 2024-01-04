@@ -1,7 +1,7 @@
 package com.mysite.medium.article_vote.entity;
 
 import com.mysite.medium.article.entity.Article;
-import com.mysite.medium.user.entity.SiteUser;
+import com.mysite.medium.user.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,7 +37,7 @@ public class ArticleVote {
 
     @ManyToOne(fetch= FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name="site_user_id")
-    private SiteUser user;
+    @JoinColumn(name="member_id")
+    private Member user;
 
 }

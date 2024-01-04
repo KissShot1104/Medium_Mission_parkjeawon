@@ -34,7 +34,7 @@
 		return new Promise(async (resolve, reject) => {
 			try {
 				let res = await axios.post(
-					`http://localhost:8080/api/login`,
+					`http://localhost:8080/member/login`,
 					{
 						username: '3',
 						password: '3'

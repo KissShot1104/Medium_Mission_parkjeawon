@@ -6,8 +6,8 @@ import com.mysite.medium.comment.dto.CommentDto;
 import com.mysite.medium.comment.service.CommentService;
 import com.mysite.medium.comment_vote.entity.CommentVote;
 import com.mysite.medium.comment_vote.service.CommentVoteService;
-import com.mysite.medium.user.dto.SiteUserDto;
-import com.mysite.medium.user.service.UserService;
+import com.mysite.medium.user.dto.MemberDto;
+import com.mysite.medium.user.service.MemberService;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class CommentController {
 
     private final ArticleService articleService;
     private final CommentService commentService;
-    private final UserService userService;
+    private final MemberService userService;
     private final CommentVoteService commentVoteService;
 
 //    @PreAuthorize("isAuthenticated()")
@@ -43,13 +43,13 @@ public class CommentController {
 //                                Principal principal) {
 //
 //        ArticleDto articleDto = this.articleService.findArticleByArticleId(articleId);
-//        SiteUserDto siteUser = this.userService.getUser(principal.getName());
+//        MemberDto member = this.userService.getUser(principal.getName());
 //
 //        if (bindingResult.hasErrors()) {
 //            model.addAttribute("article", articleDto);
 //            return "article_detail";
 //        }
-//        Long commentId = commentService.createComment(articleId, commentDto, siteUser);
+//        Long commentId = commentService.createComment(articleId, commentDto, member);
 //
 //        return String.format("redirect:/article/%s#comment_%s",
 //                articleId, commentId);

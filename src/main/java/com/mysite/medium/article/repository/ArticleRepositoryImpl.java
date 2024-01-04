@@ -8,7 +8,7 @@ import static com.querydsl.core.types.ExpressionUtils.count;
 
 import com.mysite.medium.article.dto.ArticleDto;
 import com.mysite.medium.article.dto.QArticleDto;
-import com.mysite.medium.user.dto.QSiteUserDto;
+import com.mysite.medium.user.dto.QMemberDto;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -56,7 +56,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 //                        article.id,
 //                        article.subject,
 //                        article.content,
-//                        new QSiteUserDto(
+//                        new QMemberDto(
 //                                article.author.username,
 //                                article.author.isPaid),
 //                        article.createDate,
@@ -101,7 +101,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .select(new QArticleDto(
                         article.id,
                         article.subject,
-                        new QSiteUserDto(
+                        new QMemberDto(
                                 article.author.username,
                                 article.author.isPaid),
                         article.createDate,
@@ -138,7 +138,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                         article.id,
                         article.subject,
                         article.content,
-                        new QSiteUserDto(
+                        new QMemberDto(
                                 article.author.username,
                                 article.author.isPaid),
                         article.createDate,

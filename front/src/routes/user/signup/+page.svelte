@@ -20,9 +20,9 @@
 		})
 
 		console.log(userData);
-		formData.append("userCreateDto", new Blob([userData], {type: "application/json"}));
+		formData.append("memberCreateDto", new Blob([userData], {type: "application/json"}));
 
-		axios.post("http://localhost:8080/user/signup",formData, {
+		axios.post("http://localhost:8080/member/signup",formData, {
 			headers: {
 				"Content-Type": "multipart/form-data"
 			},

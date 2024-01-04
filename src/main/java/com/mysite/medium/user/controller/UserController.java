@@ -1,7 +1,7 @@
 //package com.mysite.medium.user.controller;
 //
 //import com.mysite.medium.user.dto.UserCreateDto;
-//import com.mysite.medium.user.service.UserServiceImpl;
+//import com.mysite.medium.user.service.MemberServiceImpl;
 //import org.springframework.dao.DataIntegrityViolationException;
 //import org.springframework.stereotype.Controller;
 //import org.springframework.validation.BindingResult;
@@ -17,7 +17,7 @@
 //@RequestMapping("/user")
 //public class UserController {
 //
-//    private final UserServiceImpl userServiceImpl;
+//    private final MemberServiceImpl userServiceImpl;
 //
 //    @GetMapping("/signup")
 //    public String signup(UserCreateDto userCreateDto) {

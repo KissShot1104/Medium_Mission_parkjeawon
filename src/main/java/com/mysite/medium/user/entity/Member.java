@@ -13,11 +13,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 @Builder
-public class SiteUser {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="site_user_id")
+    @Column(name="member_id")
     private Long id;
 
     @Column(unique = true)

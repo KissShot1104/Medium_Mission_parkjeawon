@@ -81,7 +81,7 @@
 		return new Promise(async (resolve, reject) => {
 			try {
 				let res = await axios.post(
-					`http://localhost:8080/user/login`,
+					`http://localhost:8080/member/login`,
 					{
 						username: '8',
 						password: '8'
@@ -98,7 +98,7 @@
 	}
 	function checkLogin() {
 		axios
-			.get('http://localhost:8080/user/check', { withCredentials: true })
+			.get('http://localhost:8080/member/check', { withCredentials: true })
 			.then((res) => {
 				username = res.data.username;
 				isPiad = res.data.isPaid;
@@ -108,7 +108,7 @@
 	}
 
 	function logout() {
-		axios.post(`http://localhost:8080/user/logout`, null, { withCredentials: true });
+		axios.post(`http://localhost:8080/member/logout`, null, { withCredentials: true });
 		window.location.href="http://localhost:5173/article";
 	}
 

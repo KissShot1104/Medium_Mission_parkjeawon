@@ -41,7 +41,7 @@
 	let articlePaid = $state(false);
 	function checkLogin() {
 		axios
-			.get('http://localhost:8080/user/check', { withCredentials: true })
+			.get('http://localhost:8080/member/check', { withCredentials: true })
 			.then((res) => {
 				username = res.data.username;
 				isPaid = res.data.isPaid;
@@ -161,7 +161,7 @@
 		return new Promise(async (resolve, reject) => {
 			try {
 				let res = await axios.post(
-					`http://localhost:8080/user/login`,
+					`http://localhost:8080/member/login`,
 					{ username: '8', password: '8' },
 					{ withCredentials: true }
 				);
