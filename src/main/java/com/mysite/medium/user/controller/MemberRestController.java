@@ -30,13 +30,9 @@ public class MemberRestController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<?> checkUser(Principal principal) {
+    public ResponseEntity<CheckLoginDto> checkUser(Principal principal) {
 
-        if (principal == null) {
-            throw new AuthException(ErrorCode.IS_NOT_LOGIN);
-        }
-
-        CheckLoginDto checkLoginDto = userService.checkLogin(principal.getName());
+        CheckLoginDto checkLoginDto = userService.checkLogin(principal);
 
         return ResponseEntity.ok().body(checkLoginDto);
     }

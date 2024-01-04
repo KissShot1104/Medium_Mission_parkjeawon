@@ -7,6 +7,7 @@ import com.mysite.medium.user.dto.MemberCreateDto;
 import com.mysite.medium.user.dto.MemberDtoMapper;
 import com.mysite.medium.user.entity.Member;
 import com.mysite.medium.user.repository.MemberRepository;
+import java.security.Principal;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,8 +47,11 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(user);
     }
 
-    public CheckLoginDto checkLogin(final String username) {
-        final Member member = this.memberRepository.findByUsername(username)
+    public CheckLoginDto checkLogin(final Principal principal) {
+        if (principal == null) {
+            throw new AuthException(ErrorCode.IS_NOT_LOGIN);
+        }
+        final Member member = this.memberRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new AuthException(ErrorCode.IS_NOT_LOGIN));
 
         final CheckLoginDto memberDto = memberDtoMapper.memberToCheckLoginDto(member);
