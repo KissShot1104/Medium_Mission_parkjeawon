@@ -1,6 +1,7 @@
-package com.mysite.medium.user.dto;
+package com.mysite.medium.member.dto;
 
-import com.mysite.medium.user.entity.Member;
+
+import com.mysite.medium.member.entity.Member;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
