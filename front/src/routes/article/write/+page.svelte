@@ -51,7 +51,6 @@
 	}
 
 	$effect(() => {
-		promise = login();
 	});
 </script>
 

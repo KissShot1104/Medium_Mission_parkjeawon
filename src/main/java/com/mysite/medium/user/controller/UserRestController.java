@@ -1,5 +1,8 @@
 package com.mysite.medium.user.controller;
 
+import com.mysite.medium.global.exception.AuthException;
+import com.mysite.medium.global.exception.ErrorCode;
+import com.mysite.medium.user.dto.CheckLoginDto;
 import com.mysite.medium.user.dto.SiteUserDto;
 import com.mysite.medium.user.dto.UserCreateDto;
 import com.mysite.medium.user.service.UserService;
@@ -34,30 +37,16 @@ public class UserRestController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/find")
-    public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
+    @GetMapping("/check")
+    public ResponseEntity<?> checkUser(Principal principal) {
 
-        HttpSession session  = request.getSession(false);
-
-        if (session == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (principal == null) {
+            throw new AuthException(ErrorCode.IS_NOT_LOGIN);
         }
 
-        String username = (String) session.getAttribute("username");
+        CheckLoginDto checkLoginDto = userService.checkLogin(principal.getName());
 
-        SiteUserDto siteuSerDto = userService.getUser(username);
-
-
-        return ResponseEntity.ok().body(siteuSerDto);
+        return ResponseEntity.ok().body(checkLoginDto);
     }
-
-
-//    @GetMapping("/find")
-//    public ResponseEntity<?> getUserInfo(Principal principal) {
-//
-//        SiteUserDto siteuSerDto = userService.getUser(principal.getName());
-//
-//        return ResponseEntity.ok().body(siteuSerDto);
-//    }
 
 }

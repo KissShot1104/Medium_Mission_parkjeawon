@@ -35,7 +35,7 @@ public class ArticleDto {
 
     private Long commentCount;
 
-    private Boolean isPaid;
+    private Boolean articlePaid;
 
     private Long voteCount;
 

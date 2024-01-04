@@ -59,7 +59,7 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
                 .logout(logoutConfig ->
                         logoutConfig
-                                .logoutUrl("/api/logout")
+                                .logoutUrl("/user/logout")
                                 .logoutSuccessHandler(
                                         ((request, response, authentication) -> {
                                             System.out.println("로그아웃 성공");
@@ -92,7 +92,7 @@ public class SecurityConfig {
                                                                                          final AuthenticationSuccessHandler authenticationSuccessHandler
     ) {
         return new LoginAuthenticationFilter(
-                "/api/login",
+                "/user/login",
                 authenticationManager,
                 authenticationSuccessHandler
         );

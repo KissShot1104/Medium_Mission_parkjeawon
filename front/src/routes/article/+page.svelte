@@ -23,6 +23,10 @@
 	let inputTitle = $state('');
 	let inputContent = $state('');
 
+	let isLogin = $state(false);
+	let username = $state('');
+	let isPiad = $state(false);
+
 	function loadArticleList(pageNumber) {
 		return new Promise(async (resolve, reject) => {
 			try {
@@ -77,10 +81,10 @@
 		return new Promise(async (resolve, reject) => {
 			try {
 				let res = await axios.post(
-					`http://localhost:8080/api/login`,
+					`http://localhost:8080/user/login`,
 					{
-						username: '3',
-						password: '3'
+						username: '8',
+						password: '8'
 					},
 					{
 						withCredentials: true
@@ -92,17 +96,32 @@
 			}
 		});
 	}
+	function checkLogin() {
+		axios
+			.get('http://localhost:8080/user/check', { withCredentials: true })
+			.then((res) => {
+				username = res.data.username;
+				isPiad = res.data.isPaid;
+				isLogin = true;
+			})
+			.catch(() => {});
+	}
 
 	function logout() {
-		axios.post(`http://localhost:8080/api/logout`, null, { withCredentials: true });
+		axios.post(`http://localhost:8080/user/logout`, null, { withCredentials: true });
+		window.location.href="http://localhost:5173/article";
 	}
-	onMount(() => {
-		promise = loadArticleList(articleList.currentPage);
+
+	$effect(() => {
 		container.addEventListener('scroll', handleScroll);
-		login();
 		return () => {
 			container.removeEventListener('scroll', handleScroll);
 		};
+	})
+
+	onMount(async () => {
+		promise = await loadArticleList(articleList.currentPage);
+		await checkLogin();
 	});
 </script>
 
@@ -112,16 +131,24 @@
 	<div class="flex max-w-7xl mx-auto scroll-container" bind:this={container}>
 		<div class="flex-1 p-8">
 			<div class="flex space-x-4 mb-6">
+				{#if isLogin}
 				<button
-					class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+					class="btn btn-neutral"
 					on:click={() => {
 						location.href = 'article/write';
 					}}
 				>
 					글쓰기
 				</button>
-				<a class="btn btn-neutral" href="../user/login">로그인</a>
-				<button class="btn btn-neutral" on:click={logout}>로그아웃</button>
+				{/if}
+				{#if !isLogin}
+					<a class="btn btn-neutral" href="../user/login">로그인</a>
+					<a class="btn btn-neutral" href="../user/signup">회원가입</a>
+				{/if}
+
+				{#if isLogin}
+					<button class="btn btn-neutral" on:click={logout}>로그아웃</button>
+				{/if}
 				<!-- <button
 					class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
 					category2
@@ -178,7 +205,9 @@
 							<div class="flex justify-between items-center">
 								<div
 									class="inline-flex items-center rounded-full border px-2.5 py-0.5 w-fit text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-								>글쓴이 : {article.author.username}</div>
+								>
+									글쓴이 : {article.author.username}
+								</div>
 								<Icon
 									class="ml-4 clickable-icon"
 									icon="ic:outline-recommend"
@@ -199,9 +228,7 @@
 			{/each}
 		</div>
 		<div class="w-80 p-8">
-			<div class="mb-6">
-				
-			</div>
+			<div class="mb-6"></div>
 		</div>
 	</div>
 {:catch err}

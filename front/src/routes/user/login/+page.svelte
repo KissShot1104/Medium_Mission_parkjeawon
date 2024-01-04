@@ -3,8 +3,8 @@
 	import { user } from "../../../stores/userStore";
 	import { setContext } from "svelte";
 
-	let username = '';
-	let password = '';
+	let username = $state('');
+	let password = $state('');
 	let promise = Promise.resolve();
 	
 	
@@ -12,11 +12,15 @@
 		return new Promise(async (resolve, reject) => {
 			try {
 				let res = await axios.post(
-					`http://localhost:8080/api/login`,
-					{ username: username, password: password }
+					`http://localhost:8080/user/login`,
+					{ username: username, password: password },
+					{
+						withCredentials: true
+					}
 				);
 				resolve(res);
-				window.location.href="http://localhost:5173/article";
+				// window.location.href="http://localhost:5173/article";
+				location.href="/article";
 			} catch (error) {
 				reject(error);
 			} finally {
@@ -53,4 +57,5 @@
 {:then userData}
 
 {:catch error}
+	<p>실패!</p>
 {/await}

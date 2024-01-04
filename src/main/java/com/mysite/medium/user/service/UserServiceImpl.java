@@ -3,6 +3,7 @@ package com.mysite.medium.user.service;
 import com.mysite.medium.DataNotFoundException;
 import com.mysite.medium.global.exception.AuthException;
 import com.mysite.medium.global.exception.ErrorCode;
+import com.mysite.medium.user.dto.CheckLoginDto;
 import com.mysite.medium.user.dto.SiteUserDto;
 import com.mysite.medium.user.dto.SiteUserDtoMapper;
 import com.mysite.medium.user.dto.UserCreateDto;
@@ -46,11 +47,11 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    public SiteUserDto getUser(final String username) {
+    public CheckLoginDto checkLogin(final String username) {
         final SiteUser siteUser = this.userRepository.findByUsername(username)
-                .orElseThrow(() -> new AuthException(ErrorCode.ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new AuthException(ErrorCode.IS_NOT_LOGIN));
 
-        final SiteUserDto siteUserDto = siteUserDtoMapper.siteUserToSiteUserDto(siteUser);
+        final CheckLoginDto siteUserDto = siteUserDtoMapper.siteUserToCheckLoginDto(siteUser);
 
         return siteUserDto;
     }
