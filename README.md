@@ -1,1 +1,1 @@
-front 실행방법 : npm run dev
+second_session브랜치를 보시면 됩니다.
