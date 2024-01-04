@@ -24,14 +24,15 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void createUser(final MemberCreateDto memberCreateDto) {
 
-        Optional<Member> duplicatedLoginId = memberRepository.findByUsername(memberCreateDto.getUsername());
-        if (duplicatedLoginId.isPresent()) {
-            throw new AuthException(ErrorCode.DUPLICATED_LOGIN_ID);
-        }
-        Optional<Member> duplicatedEmail = memberRepository.findByEmail(memberCreateDto.getEmail());
-        if (duplicatedEmail.isPresent()) {
-            throw new AuthException(ErrorCode.DUPLICATED_EMAIL);
-        }
+        memberRepository.findByUsername(memberCreateDto.getUsername())
+                .ifPresent((m) -> {
+                    throw new AuthException(ErrorCode.DUPLICATED_LOGIN_ID);
+                });
+
+        memberRepository.findByEmail(memberCreateDto.getEmail())
+                .ifPresent((m) -> {
+                    throw new AuthException(ErrorCode.DUPLICATED_EMAIL);
+                });
 
         memberCreateDto.checkEqualsPassword();
 
