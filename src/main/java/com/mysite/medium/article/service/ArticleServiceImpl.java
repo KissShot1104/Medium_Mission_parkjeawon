@@ -1,25 +1,24 @@
 package com.mysite.medium.article.service;
 
-import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.article.dto.ArticleDto;
+import com.mysite.medium.article.dto.ArticleMapper;
+import com.mysite.medium.article.entity.Article;
 import com.mysite.medium.article.repository.ArticleRepository;
-import com.mysite.medium.comment.service.CommentService;
-import com.mysite.medium.user.dto.SiteUserDto;
-import com.mysite.medium.user.service.UserService;
+import com.mysite.medium.global.exception.EntityNotFoundException;
+import com.mysite.medium.global.exception.ErrorCode;
+import com.mysite.medium.member.dto.MemberDtoMapper;
+import com.mysite.medium.member.entity.Member;
+import com.mysite.medium.member.repository.MemberRepository;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import com.mysite.medium.DataNotFoundException;
-import com.mysite.medium.user.entity.SiteUser;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
@@ -27,107 +26,72 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final UserService userService;
-    private final CommentService commentService;
+    private final MemberRepository memberRepository;
+    private final ArticleMapper articleMapper;
+    private final MemberDtoMapper memberDtoMapper;
 
-    public Page<ArticleDto> getArticleAll(int page, String kw) {
-    	List<Sort.Order> sorts = new ArrayList<>();
+    public Page<ArticleDto> getArticleAll(final String sortCode, final String kwType, final String kw, final int page) {
+
+        Pageable pageable = PageRequest.of(page, 10);
+        return this.articleRepository.findAllByKeyword(sortCode, kwType, kw, page, pageable);
+    }
+
+    public Slice<ArticleDto> getArticleSliceAll(final int page, final String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.articleRepository.findAllByKeyword(kw, pageable);
-    }
-
-
-
-
-    ///////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////
-
-    public ArticleDto findArticleByArticleId(Long id) {
-        Optional<Article> article = this.articleRepository.findById(id);
-
-        if (article.isEmpty()) {
-            throw new DataNotFoundException("article not found");
-        }
-
-        SiteUserDto authorForm = userService.siteUserToSiteUserForm(article.get().getAuthor());
-
-
-
-        return ArticleDto.builder()
-                .id(article.get().getId())
-                .subject(article.get().getSubject())
-                .content(article.get().getContent())
-                .author(authorForm)
-                .createDate(article.get().getCreateDate())
-                .modifyDate(article.get().getModifyDate())
-                .build();
+        return this.articleRepository.findAllByKeywordSlice(kw, pageable);
     }
 
     @Transactional
-    public void createArticle(ArticleDto articleDto, SiteUserDto siteUserDto) {
+    public ArticleDto findArticleByArticleId(final Long id) {
+        final Article article = this.articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        SiteUser siteUser = userService.siteUserFormToSiteUser(siteUserDto);
+        article.incrementViewCount();//
+        final ArticleDto articleDto = articleMapper.articleToArticleDto(article);
 
-        Article q = Article.builder()
+
+        return articleDto;
+    }
+
+    @Transactional
+    public Long createArticle(final ArticleDto articleDto, final Principal principal) {
+
+
+        final Member member = memberRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
+
+        final Article article = Article.builder()//수정 바람
                 .subject(articleDto.getSubject())
                 .content(articleDto.getContent())
-                .author(siteUser)
+                .author(member)
+                .viewCount(0L)
                 .build();
-        this.articleRepository.save(q);
+
+        final Article savedArticle = articleRepository.save(article);
+        return savedArticle.getId();
     }
 
     @Transactional
-    public void modifyArticle(Long articleId, ArticleDto articleDto) {
+    public void modifyArticle(final Long articleId, final ArticleDto articleDto, final Principal principal) {
 
-        Optional<Article> article = articleRepository.findById(articleId);
+        final Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (article.isEmpty()) {
-            throw new DataNotFoundException("article not found");
-        }
+        article.checkAuthor(principal);
 
-        article.get().modifyArticle(articleDto);
-
-    }
-    
-    public void deleteArticle(Long articleId) {
-
-        Optional<Article> article = articleRepository.findById(articleId);
-
-        if (article.isEmpty()) {
-            throw new DataNotFoundException("article not found");
-        }
-
-        this.articleRepository.delete(article.get());
+        article.modifyArticle(articleDto);
     }
 
-    @Transactional
-    public void voteArticle(Long articleId, SiteUserDto siteUserDto) {
+    public void deleteArticle(final Long articleId, final Principal principal) {
 
-        Optional<Article> articlie = articleRepository.findById(articleId);
+        final Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (articlie.isEmpty()) {
-            throw new DataNotFoundException("article not found");
-        }
+        article.checkAuthor(principal);
 
-        SiteUser siteUser = userService.siteUserFormToSiteUser(siteUserDto);
-
-//        articlie.get().getVoter().add(siteUser);
-
-        this.articleRepository.save(articlie.get());
-    }
-
-    public ArticleDto articleToArticleDto(Article article) {
-        return ArticleDto.builder()
-                .id(article.getId())
-                .subject(article.getSubject())
-                .content(article.getContent())
-                .createDate(article.getCreateDate())
-                .modifyDate(article.getModifyDate())
-                .author(userService.siteUserToSiteUserForm(article.getAuthor()))
-                .build();
-
+        articleRepository.delete(article);
     }
 
 }

@@ -1,23 +1,22 @@
 package com.mysite.medium.article.service;
 
 import com.mysite.medium.article.dto.ArticleDto;
-import com.mysite.medium.article.entity.Article;
-import com.mysite.medium.user.dto.SiteUserDto;
+import java.security.Principal;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 public interface ArticleService {
 
-    public Page<ArticleDto> getArticleAll(int page, String kw);
+//    Page<ArticleDto> getArticleAll(final int page, final String kw);
+Page<ArticleDto> getArticleAll(final String sortCode, final String kwType, final String kw, final int page);
 
-    public ArticleDto findArticleByArticleId(Long id);
+    Slice<ArticleDto> getArticleSliceAll(final int page, final String kw);
+    ArticleDto findArticleByArticleId(final Long id);
 
-    public void createArticle(ArticleDto articleDto, SiteUserDto siteUserDto);
+    Long createArticle(final ArticleDto articleDto, final Principal principal);
 
-    public void modifyArticle(Long articleId, ArticleDto articleDto);
+    void modifyArticle(final Long articleId, final ArticleDto articleDto, final Principal principal);
 
-    public void deleteArticle(Long articleId);
-
-    public void voteArticle(Long articleId, SiteUserDto siteUserDto);
-    public ArticleDto articleToArticleDto(Article article);
+    void deleteArticle(final Long articleId, final Principal principal);
 
 }

@@ -4,7 +4,7 @@ import static com.mysite.medium.comment.entity.QComment.comment;
 
 import com.mysite.medium.comment.dto.CommentDto;
 import com.mysite.medium.comment.dto.QCommentDto;
-import com.mysite.medium.user.dto.QSiteUserDto;
+import com.mysite.medium.member.dto.QMemberDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -32,8 +32,9 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                         comment.content,
                         comment.createDate,
                         comment.modifyDate,
-                        new QSiteUserDto(
-                                comment.author.username
+                        new QMemberDto(
+                                comment.author.username,
+                                comment.author.isPaid
                         )
                 ))
                 .from(comment)

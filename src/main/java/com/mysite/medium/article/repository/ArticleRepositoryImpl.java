@@ -1,23 +1,26 @@
 package com.mysite.medium.article.repository;
 
 
+import static com.mysite.medium.article.entity.QArticle.article;
+import static com.mysite.medium.article_vote.entity.QArticleVote.articleVote;
+import static com.mysite.medium.comment.entity.QComment.comment;
+
 import com.mysite.medium.article.dto.ArticleDto;
 import com.mysite.medium.article.dto.QArticleDto;
-
-import com.mysite.medium.user.dto.QSiteUserDto;
+import com.mysite.medium.member.dto.QMemberDto;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.Arrays;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-
-import static com.mysite.medium.article.entity.QArticle.article;
-import static com.mysite.medium.comment.entity.QComment.comment;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 
 public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
@@ -34,14 +37,62 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     }
 
 
+//    @Override
+//    public Page<ArticleDto> findAllByKeyword(String kw, Pageable pageable) {
+//
+//        List<ArticleDto> articleList = queryFactory
+//                .select(new QArticleDto(
+//                        article.id,
+//                        article.subject,
+//                        article.content,
+//                        new QMemberDto(
+//                                article.author.username,
+//                                article.author.isPaid),
+//                        article.createDate,
+//                        comment.count()
+//                ))
+//                .from(article)
+//                .leftJoin(comment).on(comment.article.eq(article))
+//                .groupBy(article.id)
+//                .where(
+//                        articleTitleContains(kw)
+//                                .or(articleContentContains(kw))
+//                                .or(articleAuthorContains(kw))
+//                                .or(commentContentContains(kw))
+//                                .or(commentAuthorContains(kw))
+//                )
+//                .distinct()
+//                .orderBy(article.createDate.desc())
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .fetch();
+//
+//        long total = queryFactory
+//                .selectFrom(article)
+//                .leftJoin(comment).on(comment.article.eq(article)).fetchJoin()
+//                .where(
+//                        articleTitleContains(kw)
+//                                .or(articleContentContains(kw))
+//                                .or(articleAuthorContains(kw))
+//                                .or(commentContentContains(kw))
+//                                .or(commentAuthorContains(kw))
+//                )
+//                .distinct()
+//                .fetch().size();
+//
+//        return new PageImpl<>(articleList, pageable, total);
+//    }
+
     @Override
-    public Page<ArticleDto> findAllByKeyword(String kw, Pageable pageable) {
+    public Slice<ArticleDto> findAllByKeywordSlice(String kw, Pageable pageable) {
 
         List<ArticleDto> articleList = queryFactory
                 .select(new QArticleDto(
                         article.id,
                         article.subject,
-                        new QSiteUserDto(article.author.username),
+                        new QMemberDto(
+                                article.author.username,
+                                article.author.isPaid),
                         article.createDate,
                         comment.count()
                 ))
@@ -56,6 +107,43 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                                 .or(commentAuthorContains(kw))
                 )
                 .distinct()
+                .orderBy(article.createDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = articleList.size() > pageable.getPageSize();
+        List<ArticleDto> content = hasNext ? articleList.subList(0, pageable.getPageSize()) : articleList;
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
+/////////////////////
+
+    @Override
+    public Page<ArticleDto> findAllByKeyword(final String sortCode, final String kwType, final String kw, final int page, Pageable pageable) {
+
+        List<ArticleDto> articleList = queryFactory
+                .select(new QArticleDto(
+                        article.id,
+                        article.subject,
+                        article.content,
+                        new QMemberDto(
+                                article.author.username,
+                                article.author.isPaid),
+                        article.createDate,
+                        comment.count(),
+                        articleVote.countDistinct(),
+                        article.viewCount
+                ))
+                .from(article)
+                .leftJoin(comment).on(comment.article.eq(article))
+                .leftJoin(articleVote).on(articleVote.article.eq(article))
+                .groupBy(article.id)
+                .where(
+                        buildSearchPredicate(kwType, kw)
+                )
+                .distinct()
+                .orderBy(sortType(sortCode))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -64,16 +152,79 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .selectFrom(article)
                 .leftJoin(comment).on(comment.article.eq(article)).fetchJoin()
                 .where(
-                        articleTitleContains(kw)
-                                .or(articleContentContains(kw))
-                                .or(articleAuthorContains(kw))
-                                .or(commentContentContains(kw))
-                                .or(commentAuthorContains(kw))
+                        buildSearchPredicate(kwType, kw)
                 )
                 .distinct()
                 .fetch().size();
 
         return new PageImpl<>(articleList, pageable, total);
+    }
+
+    public OrderSpecifier<?> sortType(String sortCodeCond) {
+        if (sortCodeCond == null || sortCodeCond.isEmpty() || sortCodeCond.equals("idDesc")) {
+            return article.id.desc();
+        }
+
+        if (sortCodeCond.equals("idAsc")) {
+            return article.id.asc();
+        }
+
+        if (sortCodeCond.equals("hitDesc")) {
+            return article.viewCount.desc();
+        }
+        if (sortCodeCond.equals("hitAsc")) {
+            return article.viewCount.asc();
+        }
+
+        if (sortCodeCond.equals("likeCountDesc")) {
+            return articleVote.count().desc();
+        }
+        if (sortCodeCond.equals("likeCountAsc")) {
+            return articleVote.count().asc();
+        }
+
+        return article.id.desc();
+    }
+
+    public BooleanExpression buildSearchPredicate(final String kwType, final String kw) {
+        BooleanExpression predicate;
+        if (kwType != null && !kwType.isEmpty()) {
+            predicate = hasKwType(kwType, kw);
+            return predicate;
+        }
+
+        predicate = defaultSearch(kw);
+        return predicate;
+    }
+
+    public BooleanExpression hasKwType(final String kwType, final String kw) {
+
+        BooleanExpression predicate = Expressions.asBoolean(false).isTrue();
+
+        List<String> kwTypes = Arrays.stream(kwType.split(",")).toList();
+
+
+        if (kwTypes.contains("title")) {
+            predicate = predicate.or(articleTitleContains(kw));
+        }
+        if (kwTypes.contains("body")) {
+            predicate = predicate.or(articleContentContains(kw));
+        }
+        if (kwTypes.contains("author")) {
+            predicate = predicate.or(articleAuthorContains(kw));
+        }
+
+        return predicate;
+    }
+
+    public BooleanExpression defaultSearch(final String kw) {
+        BooleanExpression predicate;
+
+        predicate = articleTitleContains(kw)
+                .or(articleContentContains(kw))
+                .or(articleAuthorContains(kw));
+
+        return predicate;
     }
 
 
@@ -83,6 +234,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         }
         return article.subject.contains(articleTitleCond);
     }
+
     public BooleanExpression articleContentContains(String articleContentCond) {
         if (articleContentCond == null || articleContentCond.isEmpty()) {
             return Expressions.asBoolean(true).isTrue();

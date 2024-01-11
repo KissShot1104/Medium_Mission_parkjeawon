@@ -22,7 +22,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public static final QComment comment = new QComment("comment");
 
-    public final com.mysite.medium.QDateTime _super = new com.mysite.medium.QDateTime(this);
+    public final com.mysite.medium.global.QBaseEntity _super = new com.mysite.medium.global.QBaseEntity(this);
 
     public final com.mysite.medium.article.entity.QArticle article;
 

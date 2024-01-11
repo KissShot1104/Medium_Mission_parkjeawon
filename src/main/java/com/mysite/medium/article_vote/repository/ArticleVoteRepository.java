@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ArticleVoteRepository extends JpaRepository<ArticleVote, Long> {
-    Optional<ArticleVote> findByArticleIdAndUserId(Long articleId, Long siteUserId);
+    Optional<ArticleVote> findByArticleIdAndUserId(Long articleId, Long memberId);
 
     List<ArticleVote> findAllByArticleId(Long articleId);
 

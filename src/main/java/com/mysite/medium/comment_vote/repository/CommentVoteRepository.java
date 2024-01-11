@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CommentVoteRepository extends JpaRepository<CommentVote, Long> {
     Optional<CommentVote> findByCommentIdAndUserId(final Long commentId, final Long userId);
     void deleteCommentVoteAllByCommentId(Long commentId);
+
+    void deleteAllByArticleId(Long articleId);
     Long countByCommentId(Long commentId);
 }

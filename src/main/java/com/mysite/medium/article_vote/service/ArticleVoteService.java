@@ -6,7 +6,7 @@ import java.util.List;
 public interface ArticleVoteService {
 
     void toggleArticleVote(final Long articleId, final String username);
-    List<ArticleVoteDto> findArticleVoterAllByArticleId(Long articleId);
-    void deleteArticleVoteAllByArticleId(Long articleId);
+    List<ArticleVoteDto> findArticleVoterAllByArticleId(final Long articleId);
+    void deleteArticleVoteAllByArticleId(final Long articleId);
 
 }

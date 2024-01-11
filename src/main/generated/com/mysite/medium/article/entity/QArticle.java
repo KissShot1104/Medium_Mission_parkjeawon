@@ -22,7 +22,7 @@ public class QArticle extends EntityPathBase<Article> {
 
     public static final QArticle article = new QArticle("article");
 
-    public final com.mysite.medium.QDateTime _super = new com.mysite.medium.QDateTime(this);
+    public final com.mysite.medium.global.QBaseEntity _super = new com.mysite.medium.global.QBaseEntity(this);
 
     public final com.mysite.medium.user.entity.QSiteUser author;
 

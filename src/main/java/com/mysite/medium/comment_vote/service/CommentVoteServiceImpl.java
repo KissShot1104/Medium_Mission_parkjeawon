@@ -1,18 +1,17 @@
 package com.mysite.medium.comment_vote.service;
 
 
-import com.mysite.medium.article.service.ArticleService;
 import com.mysite.medium.comment.dto.CommentDto;
+import com.mysite.medium.comment.dto.CommentMapper;
 import com.mysite.medium.comment.entity.Comment;
 import com.mysite.medium.comment.repository.CommentRepository;
-import com.mysite.medium.comment.service.CommentService;
-import com.mysite.medium.comment_vote.dto.CommentVoteDto;
 import com.mysite.medium.comment_vote.entity.CommentVote;
 import com.mysite.medium.comment_vote.repository.CommentVoteRepository;
-import com.mysite.medium.user.entity.SiteUser;
-import com.mysite.medium.user.repository.UserRepository;
-import com.mysite.medium.user.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
+import com.mysite.medium.global.exception.EntityNotFoundException;
+import com.mysite.medium.global.exception.ErrorCode;
+import com.mysite.medium.member.entity.Member;
+import com.mysite.medium.member.repository.MemberRepository;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,76 +26,52 @@ public class CommentVoteServiceImpl implements CommentVoteService {
 
     private final CommentVoteRepository commentVoteRepository;
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
-    private final UserService userService;
-    private final ArticleService articleService;
-    private final CommentService commentService;
+    private final CommentMapper commentMapper;
+
 
     @Transactional
-    public void createCommentVote(final Long commentId, final String username) {
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        if (comment.isEmpty()) {
-            throw new EntityNotFoundException("Comment Entity Not Found");
-        }
+    public void toggleCommentVote(final Long commentId, final Principal principal) {
+        final Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new com.mysite.medium.global.exception.EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        Optional<SiteUser> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            throw new EntityNotFoundException("User Entity Not Found");
-        }
+        final Member user = memberRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
-        if (isDuplicateRecommendationVoter(commentId, user.get().getId())) {
-            throw new IllegalArgumentException("Duplicate Vote Comment");
-        }
+        final Optional<CommentVote> commentVote = commentVoteRepository.findByCommentIdAndUserId(commentId, user.getId());
 
-        CommentVote commentVote = CommentVote.builder()
-                .comment(comment.get())
-                .user(user.get())
+        if (commentVote.isEmpty()) {
+            createCommentVote(comment, user);
+        } else {
+            deleteCommentVoteAllByCommentId(commentId);
+        }
+    }
+
+    public void createCommentVote(final Comment comment, final Member user) {
+        final CommentVote commentVote = CommentVote.builder()
+                .article(comment.getArticle())
+                .comment(comment)
+                .user(user)
                 .build();
 
         commentVoteRepository.save(commentVote);
     }
 
     @Transactional
-    public void deleteCommentVoteAllByCommentId(Long commentId) {
+    public void deleteCommentVoteAllByCommentId(final Long commentId) {
         commentVoteRepository.deleteCommentVoteAllByCommentId(commentId);
     }
 
-//    public Map<CommentDto, Long> getCommentLikesForArticle(Long articleId) {
-//        List<Comment> comments = commentRepository.findAllByArticleId(articleId);
-//        Map<CommentDto, Long> commentDtoLikes = new HashMap<>();
-//        for (Comment comment: comments) {
-//            Long voteCount = commentVoteRepository.countByCommentId(comment.getId());
-//            CommentDto commentDto = commentService.commentToCommentDto(comment);
-//            commentDtoLikes.put(commentDto, voteCount);
-//        }
-//        return commentDtoLikes;
-//    }
-
-    //이렇게 댓글의 추천수를 받아오는 것보다 더 좋은 방법이 있는가?
-    public Map<Long, Long> getCommentLikesForArticle(Long articleId) {
-        List<Comment> comments = commentRepository.findAllByArticleId(articleId);
-        Map<Long, Long> commentDtoLikes = new HashMap<>();
-        for (Comment comment: comments) {
-            Long voteCount = commentVoteRepository.countByCommentId(comment.getId());
-            CommentDto commentDto = commentService.commentToCommentDto(comment);
+    public Map<Long, Long> getCommentLikesForArticle(final Long articleId) {//article 생겼으니 다시 생각해보자
+        final List<Comment> comments = commentRepository.findAllByArticleId(articleId);
+        final Map<Long, Long> commentDtoLikes = new HashMap<>();
+        for (Comment comment : comments) {
+            final Long voteCount = commentVoteRepository.countByCommentId(comment.getId());
+            final CommentDto commentDto = commentMapper.commentToCommentDto(comment);
             commentDtoLikes.put(commentDto.getId(), voteCount);
         }
         return commentDtoLikes;
-    }
-
-    public CommentVoteDto articleVoteToArticleVoteDto(CommentVote commentVote) {
-        return CommentVoteDto.builder()
-                .id(commentVote.getId())
-                .siteUserDto(userService.siteUserToSiteUserForm(commentVote.getUser()))
-                .commentDto(commentService.commentToCommentDto(commentVote.getComment()))
-                .build();
-    }
-
-    private boolean isDuplicateRecommendationVoter(final Long commentId, final Long userId) {
-
-        Optional<CommentVote> commentVote = commentVoteRepository.findByCommentIdAndUserId(commentId, userId);
-        return commentVote.isPresent();
     }
 
 
